@@ -12,7 +12,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class NjliftMonitorApplicationTests {
+public class WlwMonitorApplicationTests {
 
 	@Autowired
 	private TestRepository testRepository;

@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.jshx</groupId>
-	<artifactId>njlift-monitor</artifactId>
+	<artifactId>wlw-monitor</artifactId>
 	<version>1.0</version>
 	<packaging>jar</packaging>
 
-	<name>njlift-monitor</name>
+	<name>wlw-monitor</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>

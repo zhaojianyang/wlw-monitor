@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 //重点
 @ServletComponentScan
-public class NjliftMonitorApplication {
+public class WlwMonitorApplication {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(NjliftMonitorApplication.class, args);
+		SpringApplication.run(WlwMonitorApplication.class, args);
 	}
 
 	/**
