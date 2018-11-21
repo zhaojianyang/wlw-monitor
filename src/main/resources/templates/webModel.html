@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <title>头文件</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <!--<link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}"/>-->
+    <link rel="stylesheet" th:href="@{/new-css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/global.css}" media="all"/>
+    <link rel="stylesheet" th:href="@{/layui/skin/laypage.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/layer/skin/layer.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/layer/skin/layer.ext.css}"/>
+    <link rel="stylesheet" th:href="@{/DataTables/css/jquery.dataTables.css}"/>
+
+
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/layui/layui.js}"></script>
+    <script th:src="@{/layui/laypage.js}"></script>
+    <script th:src="@{/layui/layer/layer.js}"></script>
+    <script th:src="@{/layui/laydate/laydate.js}"></script>
+    <script th:src="@{/layui/layer/extend/layer.ext.js}"></script>
+    <script th:src="@{/echarts/echarts.js}"></script>
+    <script th:src="@{/echarts/jiangsu.js}"></script>
+    <script th:src="@{/DataTables/js/jquery.dataTables.js}"></script>
+    <script type="text/javascript" th:src="@{http://api.map.baidu.com/api?v=2.0&amp;ak=IiB5swboqSQZxF5rKP0DXhmS}"></script>
+    <script type="text/javascript" th:src="@{http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js}"></script>
+    <script type="text/javascript" th:src="@{http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js}"></script>
+    <script type="text/javascript" th:src="@{http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js}"></script>
+
+
+
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="layui-layout layui-layout-admin ">
+<div class="layui-header header ">
+    <div class="layui-main">
+        <a style="position: absolute; left: 10px;top: 10px;color:#ffffff; font-size:22px;text-decoration:none;">
+            <img th:src="@{/images/logo_whzjj.png}" style="width: 40px; height: 40px;"/>
+            南京电梯实时监测系统
+            <span style="font-size: 12px;margin-top: -8px;position: absolute;
+            margin-left: 47px;cursor: pointer;" onclick="loginOut()" title="">
+                <img th:src="@{/images/account.png}" style="width: 16px; height: 16px;margin-top: -2px;"/>
+                <span id="managerId" ></span>
+            </span>
+        </a>
+
+        <ul class="layui-nav" lay-filter="demo" style="display: block;" id="allMenu">
+
+            <li class="layui-nav-item "> <a href="home">地图监测</a></li>
+            <li class="layui-nav-item"> <a href="realtimelist">实时数据</a></li>
+            <li class="layui-nav-item"> <a href="faultrecordlist">历史故障</a></li>
+            <li class="layui-nav-item">
+                <a href="classifymonitor">分类监测</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="homemaintainlist">维保单位电梯监测</a>
+                    </dd>
+                    <dd>
+                        <a href="homeusecompanylist">使用单位电梯监测</a>
+                    </dd>
+                    <dd>
+                        <a href="homebyarealist">覆盖区域电梯监测</a>
+                    </dd>
+                    <!--<dd>-->
+                        <!--<a href="homefaultrecordlist">电梯运行故障监测</a>-->
+                    <!--</dd>-->
+                </dl>
+            </li>
+            <li class="layui-nav-item"> <a href="statisticAnalysis">统计分析</a></li>
+         <!--   <li class="layui-nav-item"> <a href="targetSystemlist">外接系统信息</a></li>-->
+            <!--<li class="layui-nav-item"><a href="#">统计分析</a>-->
+                <!--<dl class="layui-nav-child">-->
+                    <!--<dd>-->
+                        <!--<a href="#">数据传输统计</a>-->
+                    <!--</dd>-->
+                    <!--<dd>-->
+                        <!--<a href="#">实时请求记录</a>-->
+                    <!--</dd>-->
+                <!--</dl>-->
+            <!--</li>-->
+            <li class="layui-nav-item " onclick="loginOut()"><a>退出</a></li>
+        </ul>
+        <ul class="layui-nav" lay-filter="demo2" style="display: none;" id="oneMenu">
+
+           <!-- <li class="layui-nav-item "> <a href="home">地图监测</a></li>-->
+            <li class="layui-nav-item maintdata" onclick="maintRealTimeList()" style="cursor: pointer;"> <a>实时数据</a></li>
+            <li class="layui-nav-item maintdata" onclick="maintFaultRecordList()" style="cursor: pointer;"> <a>历史故障</a></li>
+            <li class="layui-nav-item maintdata" onclick="loginOut()"><a>退出</a></li>
+        </ul>
+    </div>
+
+</div>
+
+
+<div class="container-fluid  center-container" style="margin-bottom:25px;">
+    <section  layout:fragment="content"></section >
+</div>
+
+<div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+    <div class="container text-center login-bottom" style="padding-top: 15px">
+       <span> © 2017 南京市质量技术监督局 </span>
+    </div>
+</div>
+
+<!-- echart start -->
+
+<script>
+    layui
+            .use('element', function () {
+                var element = layui.element(); //导航的hover效果、二级菜单等功能，需要依赖element模块
+                element.on('nav(demo)', function (elem) {
+
+                });
+            });
+    layui
+            .use('element', function () {
+                var element = layui.element(); //导航的hover效果、二级菜单等功能，需要依赖element模块
+                element.on('nav(demo2)', function (elem) {
+
+                });
+            });
+    //退出登录
+    function loginOut() {
+        var conFlag = confirm("确认要退出吗?");
+        var url = "/jshx/loginOut";
+        if(conFlag){
+            $.ajax(
+                {
+                    url:url,
+                    type:"get",
+                    success:function(result){
+                        window.location.href='/jshx/login';
+                    }
+                });
+        }
+
+    }
+
+    var deptId = null;
+    var loginId = null;
+
+    $(document).ready(function(){
+        var ca = document.cookie.split("; ");
+
+        if(ca.length>=1){
+
+            for(var index in ca){
+                var cs = ca[index].split("=");
+                if("njLiftMonitorUserDeptId" == cs[0]){
+                    deptId = cs[1];
+                };
+                if("njLiftMonitorLoginId" == cs[0]){
+                    loginId = cs[1];
+                }
+            }
+
+            var condition = deptId + '!= null &amp;&amp; '+loginId+ '!= null';
+
+            if(condition){
+
+                var url = "/jshx/checkUserType?deptId="+deptId+"&loginId;"+loginId;
+
+                url = url.replace(";","=");
+                $.ajax(
+                    {
+                        url:url,
+                        type:"get",
+                        success:function(data){
+                            var userInfo = data;
+                            console.info(userInfo,"userInfo")
+
+                            $("#managerId").html("  " + userInfo.displayName + "欢迎您 ! ");
+
+                            document.getElementById("managerId").title = userInfo.deptName;
+
+                            if(userInfo != null){
+                                var parentDeptId = userInfo.parentDeptId;
+                                var deptCode = userInfo.deptCode;
+                                if(deptCode == '001001' || deptCode == '001'){
+                                    document.getElementById("allMenu").style.display = "block";
+                                    document.getElementById("oneMenu").style.display = "none";
+                                }
+                                if(parentDeptId == '8a8181f65c9f3816015c9f3ac0040003'){
+                                    document.getElementById("allMenu").style.display = "none";
+                                    document.getElementById("oneMenu").style.display = "block";
+                                }
+                            }
+
+                        }
+                    });
+            }
+
+
+
+        }
+
+    });
+
+
+    function maintRealTimeList(){
+        window.location.href='/jshx/realtimelistbymanit?deptId='+deptId;
+    }
+    function maintFaultRecordList(){
+        window.location.href='/jshx/faultrecordlistbymanit?deptId='+deptId;
+
+    }
+
+</script>
+
+
+</div>
+</body>
+</html>

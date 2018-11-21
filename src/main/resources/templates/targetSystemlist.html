@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta charset="UTF-8"/>
+    <title>外接系统信息</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="container-fluid">
+        <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-body">
+                <div class="row" id="lookup" style="height: 50px;padding:25px">
+                    <div class="" style="width:33.3%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">维保单位：</label>
+                        <div class="layui-input-block">
+                            <select class="input-md form-control" id="maintdeptid" name="maintdeptid"  >
+                                <option value ="">请选择</option>
+                                <option th:each="Maintain:${maintainList}" th:value="${Maintain.deptId}" th:text="${Maintain.maintainName}">--</option>
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="" style="width:33.3%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">接入时间：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="regcode" name="regcode" placeholder="请输入注册码"
+                                   autocomplete="off"
+                                   class="layui-input"/>
+                        </div>
+                    </div>
+
+                    <div class="" style="width:33.3%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">是否困人：</label>
+                        <div class="layui-input-block">
+                            <select class="input-md form-control" id="istrap" name="istrap">
+                                <option value ="">请选择</option>
+                                <option value ="1">是</option>
+                                <option value ="0">否</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-input-block" style="width: 150px; float: right;margin-top:10px;">
+                        <button class="layui-btn"  id="search">查询</button>
+                        <button type="reset" id="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-bottom: 30px;">
+            <div class="panel-body">
+                <div class="row">
+                    <div style="width:50%; float: left;margin: 5px">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table style="width: 100%" class="table table-hover td-center">
+                        <tr class="info">
+                            <td width="15%">维保单位</td>
+                            <td width="15%">接入时间</td>
+                            <td width="15%">更新时间</td>
+                            <td width="15%">监测电梯数</td>
+                            <td width="15%">故障次数</td>
+                            <td width="10%">操作</td>
+                        </tr>
+
+
+                    </table>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div id="content1" style="margin-left: 65%"></div>
+            </div>
+        </div>
+    </div>
+    <!--<script type="text/javascript">
+        var search_regcode = "";
+        var search_istrap = "";
+        var search_maintdeptid="";
+        var page = 0;
+        $(function () {
+            $("li.layui-nav-item").eq(3).addClass("layui-this");
+
+            getList(search_regcode,search_istrap,search_maintdeptid,0);
+
+            $("#search").bind("click",function () {
+                search_regcode = $("#regcode").val();
+                search_istrap = $("#istrap").val();
+                search_maintdeptid=$("#maintdeptid").val();
+                page=0;
+                getList(search_regcode,search_istrap,search_maintdeptid,page);
+            });
+
+            $("#reset").bind("click",function () {
+                $("#regcode").val("");
+                $("#istrap").val("");
+                $("#maintdeptid").val("");
+            });
+
+        });
+
+        function getList(search_regcode,search_istrap,search_maintdeptid,page) {
+            /*<![CDATA[*/
+            var url = "getFaultrecordList?regcode="+search_regcode+"&istrap="+search_istrap+"&maintdeptid="+search_maintdeptid+"&page="+page;
+            $("table tr.info").nextAll().remove();
+            $.get(url,function (data) {
+                var list = data.liftfaults;
+                var pages = data.pages;
+                for (var i=0;i<list.length;i++)
+                {
+                    var tr = $("<tr></tr>");
+                    var td1 = $("<td width='15%'>"+list[i].regcode+"</td>");
+                    tr.append(td1);
+                    var starttime = "";
+                    if(list[i].starttime!=null&&list[i].starttime.length>12){
+                        starttime = list[i].starttime.substring(0,4)+"-"+list[i].starttime.substring(4,6)+"-"+list[i].starttime.substring(6,8)+" "
+                            + list[i].starttime.substring(8,10)+":"+list[i].starttime.substring(10,12)+":"+list[i].starttime.substring(12,14);
+                    }
+                    var td2 = $("<td width='15%'>"+starttime+"</td>");
+                    tr.append(td2);
+                    var dealtime = "";
+                    if(list[i].dealtime!=null&&list[i].dealtime.length>12){
+                        dealtime = list[i].dealtime.substring(0,4)+"-"+list[i].dealtime.substring(4,6)+"-"+list[i].dealtime.substring(6,8)+" "
+                            + list[i].dealtime.substring(8,10)+":"+list[i].dealtime.substring(10,12)+":"+list[i].dealtime.substring(12,14);
+                    }
+                    var td3 = $("<td width='15%'>"+dealtime+"</td>");
+                    tr.append(td3);
+                    var istrap = "";
+                    if(list[i].istrap=="0"){
+                        istrap="否";
+                    }else{
+                        istrap="是";
+                    }
+                    var td4 = $("<td width='15%'>"+istrap+"</td>");
+                    tr.append(td4);
+                    var selfrepair = "";
+                    if(list[i].selfrepair=="0"){
+                        selfrepair="否";
+                    }else{
+                        selfrepair="是";
+                    }
+                    var td5 = $("<td width='15%'>"+selfrepair+"</td>");
+                    tr.append(td5);
+                    var td6 = $("<td width='10%'></td>");
+                    var a2 = $("<a style='color: #046BB0'>查看&nbsp;&nbsp;</a>");
+                    a2.attr("href","javascript:detail('"+list[i].id+"');");
+                    td6.append(a2);
+                    tr.append(td6);
+                    $("table").append(tr);
+                }
+                laypage({
+                    cont: 'content1',
+                    pages: pages-1,
+                    curr: page,
+                    jump: function (obj, first) {
+                        if (!first) {
+                            getList(search_regcode,search_istrap,search_maintdeptid,obj.curr);
+                        }
+                    }
+                });
+            },"json");
+            /*]]>*/
+        }
+
+        function detail(regcode) {
+            layer.open({
+                type: 2,
+                title: '故障详情',
+                shade: [0],
+                area: ['1000px', '400px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['getFaultrecordDetail/' + regcode, 'no'],
+
+            });
+        }
+    </script>-->
+</section>
+</body>
+</html>

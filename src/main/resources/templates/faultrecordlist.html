@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta charset="UTF-8"/>
+    <title>历史故障</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}"/>
+
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+        .layui-btn {
+            border-radius: 8px;
+        }
+        .layui-input-block {
+            margin-left: 100px;
+            min-height: 36px;
+        }
+    </style>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="container-fluid" style="width: 102.5%; margin-left: -1.2%;">
+        <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-body">
+                <div class="row" id="lookup" style="height: 50px;padding:25px;margin-right: -30px;margin-left: -40px;">
+
+                    <div class="" style="width:27%; float: left;">
+                        <label class="layui-form-label" style="width: 90px;">注册码：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="regcode" name="regcode" placeholder="请输入注册码"
+                                   autocomplete="off"
+                                   class="layui-input" style="height: 36px;line-height: 36px;"/>
+                        </div>
+                    </div>
+
+                    <div class="" style="width:22%; float: left;">
+                        <label class="layui-form-label" style="width: 90px;">识别码：</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="liftCode" name="liftCode" placeholder="请输入识别码"
+                                   autocomplete="off"
+                                   class="layui-input" style="height: 36px;line-height: 36px;"/>
+                        </div>
+                    </div>
+                    <div class="" style="width:29.5%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">维保单位：</label>
+                        <div class="layui-input-block">
+                            <select class="input-md form-control" id="maintdeptid" name="maintdeptid"  >
+                                <option value ="">请选择</option>
+                                <option th:each="Maintain:${maintainList}" th:value="${Maintain.deptId}" th:text="${Maintain.maintainName}">--</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="" style="width:21.5%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">是否困人：</label>
+                        <div class="layui-input-block">
+                            <select class="input-md form-control" id="istrap" name="istrap">
+                                <option value ="">请选择</option>
+                                <option value ="1">是</option>
+                                <option value ="0">否</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-input-block" style="width: 150px; float: right;
+                    margin-top:10px;margin-right: -3%;" id="toExport">
+                        <button class="layui-btn"  onclick="toExport()">导出数据</button>
+                    </div>
+
+                    <div class="layui-input-block" style="width: 150px; float: right;margin-top:10px;margin-right: -3.4%;">
+                        <button class="layui-btn"  id="search">查询</button>
+                        <button type="reset" id="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-bottom: 30px;">
+            <div class="panel-body">
+                <div class="row">
+                    <div style="width:50%; float: left;margin: 5px">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table style="width: 100%" class="table table-hover td-center">
+                        <tr class="info">
+                            <!--<td width="19%">注册码</td>-->
+                            <td width="7%">识别码</td>
+                            <td width="11%">维保单位</td>
+                            <td width="17%">发生时间</td>
+                            <td width="17%">处置时间</td>
+                            <td width="8%">是否困人</td>
+                            <td width="10%">是否自恢复</td>
+                            <td width="11%">故障类型</td>
+                            <td width="11%">处置说明</td>
+                            <td width="10%">操作</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="text-align: center;display: block;" id="onload">
+                    <iframe scrolling="no"  class="layui-layer-load"
+                            frameborder="0"
+                            style="height: 350px;"></iframe>
+
+                </div>
+
+            </div>
+            <div class="panel-footer">
+
+                <div class="laypage_main laypageskin_default" style="position: absolute;margin-left: 25%;" id="totalDiv">
+                    <span class="laypage_curr" id="totalNum"></span>
+                </div>
+                <div id="content1" style="margin-left: 42%;margin-right: -5%;"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var search_regcode = "";
+        var search_istrap = "";
+        var search_maintdeptid = "";
+        var liftCode = "";
+        var page = 1;
+        $(function () {
+            $("li.layui-nav-item").eq(2).addClass("layui-this");
+
+            getList(search_regcode,search_istrap,search_maintdeptid,1,liftCode);
+
+            $("#search").bind("click",function () {
+                search_regcode = $("#regcode").val();
+                search_istrap = $("#istrap").val();
+                search_maintdeptid = $("#maintdeptid").val();
+                liftCode = $("#liftCode").val();
+                page=1;
+                getList(search_regcode,search_istrap,search_maintdeptid,page,liftCode);
+            });
+
+            $("#reset").bind("click",function () {
+                $("#regcode").val("");
+                $("#istrap").val("");
+                $("#maintdeptid").val("");
+                $("#liftCode").val("");
+            });
+
+        });
+
+        function getList(search_regcode,search_istrap,search_maintdeptid,page,liftCode) {
+            /*<![CDATA[*/
+            document.getElementById("onload").style.display = "block";
+            var url = "getFaultrecordList?regcode="+search_regcode+"&istrap="+search_istrap+"&maintdeptid="+search_maintdeptid+"&page="+page+"&liftCode="+liftCode;
+            $("table tr.info").nextAll().remove();
+            $.get(url,function (data) {
+                document.getElementById("onload").style.display = "none";
+                var list = data.liftfaults;
+                var totalNum = data.total;
+
+                $("#totalNum").html("总共&nbsp;&nbsp;" + totalNum + "&nbsp;&nbsp;条记录");
+
+                var pages = data.pages;
+                for (var i=0;i<list.length;i++)
+                {
+                    var tr = $("<tr></tr>");
+/*                    var td1 = $("<td width='19%'>"+list[i].regcode+"</td>");
+                    tr.append(td1);*/
+                    var td11 = $("<td width='7%'>"+list[i].liftCode+"</td>");
+                    tr.append(td11);
+                    var deptId = list[i].deptId;
+                    if(deptId.length > 6){
+                        deptId = deptId.substring(0,6) + "...";
+                    }
+                    var td111 = $("<td width='11%' title = " + list[i].deptId +">" + deptId + "</td>");
+                    tr.append(td111);
+                    var starttime = "";
+                    if(list[i].starttime!=null&&list[i].starttime.length>12){
+                        starttime = list[i].starttime.substring(0,4)+"-"+list[i].starttime.substring(4,6)+"-"+list[i].starttime.substring(6,8)+" "
+                            + list[i].starttime.substring(8,10)+":"+list[i].starttime.substring(10,12)+":"+list[i].starttime.substring(12,14);
+                    }
+                    var td2 = $("<td width='17%'>"+starttime+"</td>");
+                    tr.append(td2);
+                    var dealtime = "";
+                    if(list[i].dealtime!=null&&list[i].dealtime.length>12){
+                        dealtime = list[i].dealtime.substring(0,4)+"-"+list[i].dealtime.substring(4,6)+"-"+list[i].dealtime.substring(6,8)+" "
+                            + list[i].dealtime.substring(8,10)+":"+list[i].dealtime.substring(10,12)+":"+list[i].dealtime.substring(12,14);
+                    }
+                    var td3 = $("<td width='17%'>"+dealtime+"</td>");
+                    tr.append(td3);
+                    var istrap = "";
+                    if(list[i].istrap=="0"){
+                        istrap="否";
+                    }else{
+                        istrap="是";
+                    }
+                    var td4 = $("<td width='8%'>"+istrap+"</td>");
+                    tr.append(td4);
+                    var selfrepair = "";
+                    if(list[i].selfrepair=="0"){
+                        selfrepair="否";
+                    }else{
+                        selfrepair="是";
+                    }
+                    var td5 = $("<td width='10%'>"+selfrepair+"</td>");
+                    tr.append(td5);
+                    var content = list[i].faultCode.content;
+                    var contentNew;
+                    if(content == undefined){
+                        contentNew = "";
+                        content = "";
+                    }else if(content.length >6 ){
+                        contentNew = content.substring(0,6) + "...";
+                    }else{
+                        contentNew = content;
+                    }
+                    var td55 = $("<td width='11%' title= " + content + ">"+contentNew+"</td>");
+                    tr.append(td55);
+
+                    var dealnote = list[i].dealnote;
+                    if(dealnote.length > 6){
+                        dealnote = dealnote.substr(0,6) + "...";
+                    }
+                    var td555 = $("<td width='11%' title= " + list[i].dealnote + ">" + dealnote + "</td>");
+                    tr.append(td555);
+
+                    var td6 = $("<td width='10%'></td>");
+
+//                    var a2 = $("<a style='color: #046BB0'>查看&nbsp;&nbsp;</a>");
+
+                    var a2 = $("<a href='javascript:currentstate(\""+list[i].regcode+"\")'  style='color: #046BB0'>" +
+                        "<img src='images/webcam.png'></a>");
+
+//                    a2.attr("href","javascript:detail('"+list[i].id+"');");
+ //                   a2.attr("href","/jshx/home?regcode="+list[i].regcode);
+
+                    td6.append(a2);
+                    tr.append(td6);
+                    $("table").append(tr);
+                }
+
+                setTimeout(function () {
+                    var pageContent = $("#content1").html();
+
+                    if(pageContent == ""){
+                        document.getElementById("totalDiv").style.position = "relative";
+                    }else{
+                        document.getElementById("totalDiv").style.position = "absolute";
+                    }
+                },200);
+
+                laypage({
+                    cont: 'content1',
+                    pages: pages,
+                    curr: page,
+                    jump: function (obj, first) {
+                        if (!first) {
+                            getList(search_regcode,search_istrap,search_maintdeptid,obj.curr,liftCode);
+                        }
+                    }
+                });
+            },"json");
+            /*]]>*/
+        }
+
+        function detail(id) {
+            layer.open({
+                type: 2,
+                title: '故障详情',
+                shade: [0],
+                area: ['1000px', '400px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['getFaultrecordDetail/' + id, 'no'],
+
+            });
+        }
+
+
+
+
+        function currentstate(regcode){
+            /*<![CDATA[*/
+            //map.closeInfoWindow();
+            layer.open({
+                type: 2,
+                title: '电梯实时状态',
+                shade: [0],
+                area: ['900px', '540px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['rundetail?regcode='+regcode, 'no'], //iframe的url，no代表不显示滚动条
+                /* btn: ['查看电梯', '关闭窗口'],
+                 success: function(layero){
+                 var btn = layero.find('.layui-layer-btn');
+                 btn.find('.layui-layer-btn0').attr({
+                 href: 'health'
+                 });
+                 }*/
+            });
+            /*]]>*/
+        }
+
+
+
+
+        function toExport() {
+
+            layer.open({
+                type: 2,
+                title: '请选择导出数据的时间区间 :',
+                shade: [0.5, '#000', false],
+                area: ['750px', '350px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['confirmexportexcel?type='+'fault', 'no'], //iframe的url，no代表不显示滚动条
+                btn: ['确认导出', '取消导出'],
+                success: function(layero, index) {
+                    var btn = layero.find('.layui-layer-btn');
+                    var body = layer.getChildFrame('body',index);//建立父子联系
+                    btn.find('.layui-layer-btn0').bind('click', function () {
+
+                        var cdateMin = body.contents().find("#cdateMin").val();
+                        var cdateMax = body.contents().find("#cdateMax").val();
+                        cdateMin = cdateMin.replace("-","").replace("-","");
+                        cdateMax = cdateMax.replace("-","").replace("-","");
+                        var startTime = cdateMin;
+                        var endTime = cdateMax;
+
+
+
+                        if(endTime ==""){
+                            exportFaultrecordListData(startTime,endTime);
+                            return;
+                        }else if(startTime ==""){
+                            exportFaultrecordListData(startTime,endTime);
+                            return;
+                        }
+
+
+                        if(startTime>endTime){
+                            alert("起始时间不能大于结束时间!!!")
+                            return;
+                        }else{
+                            exportFaultrecordListData(startTime,endTime);
+                        }
+
+                    })
+
+                }
+                /*
+                 success: function(layero, index){
+                 var body = layer.getChildFrame('body',index);//建立父子联系
+                 //给子页面复制
+                 body.contents().find("#regcode").val($("#regcode").val());
+                 body.contents().find("#isonline").val($("#isonline").val());
+                 body.contents().find("#deptId").val($("#maintdeptid").val());
+
+
+                 }*/
+
+            });
+
+        }
+
+
+
+
+
+        function exportFaultrecordListData(startTime,endTime) {
+            search_regcode = $("#regcode").val();
+            search_istrap = $("#istrap").val();
+            search_maintdeptid = $("#maintdeptid").val();
+            liftCode = $("#liftCode").val();
+            var url = "/jshx/exportFaultrecordListExcelData?regcode="+search_regcode+"&istrap;"+search_istrap+"&deptId;"+
+                search_maintdeptid+"&startTime;"+startTime+"&endTime;"+endTime+"&liftCode;"+liftCode
+            url = url.replace(";","=").replace(";","=").replace(";","=").replace(";","=").replace(";","=");
+            window.location.href = url
+//            不可以发ajax请求,因为返回的数据类型只有那三种,浏览器识别不了是excel
+            /*var param = {regcode:search_regcode,istrap:search_istrap,deptId:search_maintdeptid}
+            $.ajax(
+                {
+                    url:url,
+                    type:"post",
+                    data:param,
+                    success:function(result){
+
+
+                    }
+                });*/
+        }
+
+    </script>
+</section>
+</body>
+</html>

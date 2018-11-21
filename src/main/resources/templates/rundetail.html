@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <title>运行详情</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/css/rundata.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <style type="text/css">
+        .title{
+            display: block;
+            width: 130px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+
+</head>
+
+<body style="background:#f5f3f0">
+
+<div class="tc_dtxx">
+    <div class="fl jbxx">
+        <div class="dt_po">
+            <div class="fl">
+                <div class="top_ceng"><b><img id="fl_direction" src="images/dt_arrow_up1.png"/></b><span id="fl_floor">5</span></div>
+                <div class="dt_img"><img id="fl_door" src="images/dt_po_close.png"/></div>
+            </div>
+            <div class="fr">
+                <div><b><img id="fr_direction" src="images/dt_arrow_up2.png"/></b><span id="fr_floor">5</span></div>
+                <div><b><a id="fr_direction_up" href="#" class="btn_dt1"></a></b>
+                    <b><a id="fr_direction_down" href="#" class="btn_dt2"></a></b></div>
+            </div>
+        </div>
+        <div class="jbxx_left">
+           <!-- <div>电梯注册码：<span class="fr title" id="jbxx_zcm"></span></div>-->
+            <div>电梯注册码：<span class="fr" id="jbxx_zcm"></span></div>
+            <div>96333编码：<span class="fr" id="jbxx_sbm"></span></div>
+            <div id = "jbxx_dz"></div>
+            <!--<div>维保单位：<span class="fr title" id="jbxx_wbdw"></span></div>-->
+            <div id = "jbxx_wbdw"></div>
+            <div>上次检验日期：<span class="fr" id="jbxx_scjyrq"></span></div>
+            <div>最后上线时间：<span class="fr" id="jbxx_zhsxsj"></span></div>
+        </div>
+    </div>
+
+
+    <div class="tjxx">
+
+        <div class="tab_ul">
+            <ul>
+                <li><a href="#" id="dtyxzt" class="click">电梯运行状态</a></li>
+                <li><a href="#" id="lsyxzt" >历史运行状态</a></li>
+                <li><a href="#" id="lsgzjl" >历史故障记录</a></li>
+                <li><a href="#" id="lswbjl">历史维保记录</a></li>
+            </ul>
+        </div>
+
+        <div class="tab_1" >
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td id="maincontactor"><span>总接触器：</span> <b class="zt_off"></b>吸合 <b class="zt_off"></b>断开</td>
+                    <td id="runcontactor"><span>运行接触器：</span> <b class="zt_off"></b>吸合 <b class="zt_off"></b>断开</td>
+                </tr>
+                <tr>
+                    <td id="circuit"><span>安全回路：</span> <b class="zt_off"></b>正常 <b class="zt_off"></b>断开</td>
+                    <td ><span>运行模式：</span> <b class="c1" id="mode"></b></td>
+                </tr>
+                <tr>
+                    <td id="carstatus"><span>轿厢状态：</span> <b class="zt_off"></b>运行 <b class="zt_off"></b>停止</td>
+                    <td id="direction"><span>运行方向：</span> <b class="zt_off"></b>上行 <b class="zt_off"></b>下行</td>
+                </tr>
+                <tr>
+                    <td id="iszone"><span>是否在门区：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                    <td id="doorstatus"><span>关门到位：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                </tr>
+                <tr>
+                    <td id="uplimit"><span>上极限：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                    <td id="downlimit"><span>下极限：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                </tr>
+                <tr>
+                    <td id="alarm"><span>按钮报警：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                    <td id="passenger"><span>是否有人：</span> <b class="zt_off"></b>是 <b class="zt_off"></b>否</td>
+                </tr>
+            </table>
+            <div class="yxtime">运行时间：<span id="hours" class="c1"></span> 小时</div>
+            <div class="yxtime">运行次数：<span id="times" class="c2"></span>次</div>
+        </div>
+
+
+        <div class="tab_2" style="display:none">
+
+            <div class="view1_info" style="display: none" id="lsgz_yxzt">
+                <div>总接触器状态<span class="fr">开启</span></div>
+                <div>运行接触器状态<span class="fr">断开</span></div>
+                <div>安全回路状态<span class="fr">开启</span></div>
+                <div>轿厢运行状态<span class="fr">运行</span></div>
+                <div>运行方向<span class="fr">左</span></div>
+                <div>上极限<span class="fr">是</span></div>
+                <div>下极限<span class="fr">是</span></div>
+                <div>报警按钮<span class="fr">是</span></div>
+                <div>轿厢在门区<span class="fr">是</span></div>
+                <div>发生故障楼层<span class="fr">是</span></div>
+                <div>关门到位<span class="fr">是</span></div>
+                <div>累计运行小时数<span class="fr"></span></div>
+                <div>累计运行次数<span class="fr"></span></div>
+            </div>
+
+            <table cellpadding="0" cellspacing="0" class="table_style" id="lsgzlist">
+                <tr id="lsgz_title">
+                    <th>发生时间</th>
+                    <th>故障类型</th>
+                    <th>处置时间</th>
+                    <th>处置人</th>
+                    <th>是否困人</th>
+                    <th>是否自我恢复</th>
+                    <th>运行数据</th>
+                    <!--<th>说明</th>-->
+                </tr>
+            </table>
+
+            <div class="page">
+                共 <span id="lsgz_pages"></span> 页，<span id="lsgz_total"></span>条记录，第 <span id="lsgz_page">1</span> 页
+                <a href="#" id="lsgz_first">首页</a>
+                <a href="#" id="lsgz_last">末页</a>
+                <a href="#" id="lsgz_pre">上一页</a>
+                <a href="#" id="lsgz_next">下一页</a>
+            </div>
+
+        </div>
+
+
+        <div class="tab_3" style="display:none">
+
+            <table cellpadding="0" cellspacing="0" class="table_style" id="lswblist">
+                <tr id="lswb_title">
+                    <th>开始维保时间</th>
+                    <th>结束维保时间</th>
+                    <th>维保单位</th>
+                    <th>维保人员</th>
+                    <th>维保类型</th>
+                    <!--<th>操作</th>-->
+                </tr>
+
+                <tr>
+                    <td>2016-09-08<br/>12:34</td>
+                    <td>2016-09-08<br/> 12:34</td>
+                    <td>日立江苏公司</td>
+                    <td>刘成材</td>
+                    <td>半月保</td>
+                    <td><a href="#" class="view2">查看</a></td>
+                </tr>
+
+            </table>
+
+            <div class="page">
+                共 <span id="lswb_pages"></span> 页，<span id="lswb_total"></span>条记录，第 <span id="lswb_page">1</span> 页
+                <a href="#" id="lswb_first">首页</a>
+                <a href="#" id="lswb_last">末页</a>
+                <a href="#" id="lswb_pre">上一页</a>
+                <a href="#" id="lswb_next">下一页</a>
+            </div>
+        </div>
+
+
+
+        <div class="tab_4" style="display:none">
+
+             <div class="view1_info" style="display: none" id="lsyx_yxzt">
+                 <div>总接触器状态<span class="fr">开启</span></div>
+                 <div>运行接触器状态<span class="fr">断开</span></div>
+                 <div>安全回路状态<span class="fr">开启</span></div>
+                 <div>运行模式<span class="fr">正常运行</span></div>
+                 <div>轿厢运行状态<span class="fr"></span></div>
+                 <div>轿厢是否在门区<span class="fr"></span></div>
+                 <div>当前楼层<span class="fr"></span></div>
+                 <div>关门是否到位<span class="fr"></span></div>
+                 <div>上极限是否动作<span class="fr"></span></div>
+                 <div>下极限是否动作<span class="fr"></span></div>
+                 <div>报警按钮是否动作<span class="fr"></span></div>
+                 <div>是否有人<span class="fr"></span></div>
+                 <div>累计运行小时数<span class="fr"></span></div>
+                 <div>累计运行次数<span class="fr"></span></div>
+             </div>
+
+            <table cellpadding="0" cellspacing="0" class="table_style" id="lsyxlist">
+                <tr id="lsyx_title">
+                    <th width="1%">注册码</th>
+                    <th width="1%">识别码</th>
+                    <th>更新时间</th>
+                    <!--<th>运行模式</th>-->
+                    <th>运行方向</th>
+                    <th>当前楼层</th>
+                    <th>累计运行小时数</th>
+                    <th>累计运行次数</th>
+                    <th>其他数据</th>
+                    <!--<th>说明</th>-->
+                </tr>
+            </table>
+
+            <div class="page">
+                共 <span id="lsyx_pages"></span> 页，<span id="lsyx_total"></span>条记录，第 <span id="lsyx_page">1</span> 页
+                <a href="#" id="lsyx_first">首页</a>
+                <a href="#" id="lsyx_last">末页</a>
+                <a href="#" id="lsyx_pre">上一页</a>
+                <a href="#" id="lsyx_next">下一页</a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <input type="hidden" th:value="${regcode}" id="regcode"/>
+</div>
+<script type="text/javascript">
+    var regcode = $("#regcode").val();
+    var lsyxCurpage = 0;
+    var lsyxPages = 1;
+    var lsgzCurpage = 0;
+    var lsgzPages = 1;
+    var lswbCurpage = 0;
+    var lswbPages = 1;
+
+    $(function () {
+        $("#dtyxzt").bind('click',function(){
+            $(this).addClass("click");
+            $("#lsgzjl").removeClass("click");
+            $("#lswbjl").removeClass("click");
+            $("#lsyxzt").removeClass("click");
+            $(".tab_1").show();
+            $(".tab_2").hide();
+            $(".tab_3").hide();
+            $(".tab_4").hide();
+        });
+        $("#lsgzjl").bind('click',function(){
+            $(this).addClass("click");
+            $("#dtyxzt").removeClass("click");
+            $("#lswbjl").removeClass("click");
+            $("#lsyxzt").removeClass("click");
+            $(".tab_1").hide();
+            $(".tab_2").show();
+            $(".tab_3").hide();
+            $(".tab_4").hide();
+            getDtlsgz(regcode,lsgzCurpage);
+        });
+        $("#lswbjl").bind('click',function(){
+            $(this).addClass("click");
+            $("#dtyxzt").removeClass("click");
+            $("#lsgzjl").removeClass("click");
+            $("#lsyxzt").removeClass("click");
+            $(".tab_1").hide();
+            $(".tab_2").hide();
+            $(".tab_4").hide();
+            $(".tab_3").show();
+            getDtlswb(regcode,lswbCurpage);
+        });
+        $("#lsyxzt").bind('click',function(){
+            $(this).addClass("click");
+            $("#dtyxzt").removeClass("click");
+            $("#lsgzjl").removeClass("click");
+            $("#lswbjl").removeClass("click");
+            $(".tab_1").hide();
+            $(".tab_2").hide();
+            $(".tab_3").hide();
+            $(".tab_4").show();
+            getDtlsyx(regcode,lsyxCurpage);
+        });
+
+
+        getDtjbxx(regcode);
+        getDtyxzt(regcode);
+
+
+
+
+
+        //历史运行记录页签
+        $("#lsyx_first").bind('click',function(){
+            lsyxCurpage = 0;
+            getDtlsyx(regcode,lsyxCurpage);
+        });
+        $("#lsyx_last").bind('click',function(){
+            lsyxCurpage = lsyxPages;
+            getDtlsyx(regcode,lsyxCurpage);
+        });
+        $("#lsyx_next").bind('click',function(){
+            /*<![CDATA[*/
+            if(lsyxCurpage<lsyxPages){
+                lsyxCurpage ++;
+                getDtlsyx(regcode,lsyxCurpage);
+            }
+            /*]]>*/
+        });
+        $("#lsyx_pre").bind('click',function(){
+            /*<![CDATA[*/
+            if(lsyxCurpage>0){
+                lsyxCurpage--;
+                getDtlsyx(regcode,lsyxCurpage);
+            }
+            /*]]>*/
+        });
+
+        //故障记录页签
+        $("#lsgz_first").bind('click',function(){
+            lsgzCurpage = 0;
+            getDtlsgz(regcode,lsgzCurpage);
+        });
+        $("#lsgz_last").bind('click',function(){
+            lsgzCurpage = lsgzPages;
+            getDtlsgz(regcode,lsgzCurpage);
+        });
+        $("#lsgz_next").bind('click',function(){
+            /*<![CDATA[*/
+            if(lsgzCurpage<lsgzPages){
+                lsgzCurpage ++;
+                getDtlsgz(regcode,lsgzCurpage);
+            }
+            /*]]>*/
+        });
+        $("#lsgz_pre").bind('click',function(){
+            /*<![CDATA[*/
+            if(lsgzCurpage>0){
+                lsgzCurpage--;
+                getDtlsgz(regcode,lsgzCurpage);
+            }
+            /*]]>*/
+        });
+
+        //维保记录页签
+        $("#lswb_first").bind('click',function(){
+            lswbCurpage = 0;
+            getDtlswb(regcode,lswbCurpage);
+        });
+        $("#lswb_last").bind('click',function(){
+            lswbCurpage = lswbPages;
+            getDtlswb(regcode,lswbCurpage);;
+        });
+        $("#lswb_next").bind('click',function(){
+            /*<![CDATA[*/
+            if(lswbCurpage<lswbPages){
+                lswbCurpage ++;
+                getDtlswb(regcode,lswbCurpage);
+            }
+            /*]]>*/
+        });
+        $("#lswb_pre").bind('click',function(){
+            /*<![CDATA[*/
+            if(lswbCurpage>0){
+                lswbCurpage--;
+                getDtlswb(regcode,lswbCurpage);
+            }
+            /*]]>*/
+        });
+
+    });
+
+
+    function getDtjbxx(regcode) {
+        /*<![CDATA[*/
+        var url = "getDtjbxx?regcode="+regcode;
+        $.get(url,function (data) {
+            var jbxx = data.liftdto;
+            $("#jbxx_zcm").html(jbxx.regcode);
+            $("#jbxx_sbm").html(jbxx.liftcode);
+            $("#jbxx_dz").html('电梯地址：<span class="fr title"  title = '+ jbxx.liftaddress +' >'+ jbxx.liftaddress +'</span>');
+            $("#jbxx_wbdw").html('维保单位：<span class="fr title" title ='+ jbxx.maintainName +' >'+ jbxx.maintainName +'</span>');
+            $("#jbxx_scjyrq").html(jbxx.lastInspecttime);
+            $("#jbxx_zhsxsj").html(jbxx.lastUptime);
+        },"json");
+        /*]]>*/
+    }
+    
+    function getDtyxzt(regcode) {
+        /*<![CDATA[*/
+        var url = "getDtyxzt?regcode="+regcode;
+        $.get(url,function (data) {
+            var liftrun = data.liftrun;
+            //总接触器
+            if(liftrun.maincontactor=="0"){
+                $("#maincontactor").find("b").eq(0).attr("class","zt_on");
+                $("#maincontactor").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.maincontactor=="1"){
+                $("#maincontactor").find("b").eq(0).attr("class","zt_off");
+                $("#maincontactor").find("b").eq(1).attr("class","zt_on");
+            }
+            //运行接触器
+            if(liftrun.runcontactor=="0"){
+                $("#runcontactor").find("b").eq(0).attr("class","zt_on");
+                $("#runcontactor").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.runcontactor=="1") {
+                $("#runcontactor").find("b").eq(0).attr("class","zt_off");
+                $("#runcontactor").find("b").eq(1).attr("class","zt_on");
+            }
+            //安全回路
+            if(liftrun.circuit=="0"){
+                $("#circuit").find("b").eq(0).attr("class","zt_on");
+                $("#circuit").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.circuit=="1"){
+                $("#circuit").find("b").eq(0).attr("class","zt_off");
+                $("#circuit").find("b").eq(1).attr("class","zt_on");
+            }
+            //当前服务模式
+            if(liftrun.mode=="0"){
+                $("#mode").html("停止服务");
+            }else if(liftrun.mode=="1"){
+                $("#mode").html("正常运行");
+            }else if(liftrun.mode=="2"){
+                $("#mode").html("检修");
+            }else if(liftrun.mode=="3"){
+                $("#mode").html("消防返回");
+            }else if(liftrun.mode=="4"){
+                $("#mode").html("应急电源运行");
+            }else if(liftrun.mode=="5"){
+                $("#mode").html("其他模式");
+            }
+            //轿厢运行状态
+            if(liftrun.carstatus=="1"){
+                $("#carstatus").find("b").eq(0).attr("class","zt_on");
+                $("#carstatus").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.carstatus=="0"){
+                $("#carstatus").find("b").eq(0).attr("class","zt_off");
+                $("#carstatus").find("b").eq(1).attr("class","zt_on");
+            }
+            //方向
+            if(liftrun.direction=="1"){
+                $("#direction").find("b").eq(0).attr("class","zt_on");
+                $("#direction").find("b").eq(1).attr("class","zt_off");
+                $("#fl_direction").attr("src","images/dt_arrow_up1.png");
+                $("#fr_direction").attr("src","images/dt_arrow_up2.png");
+                $("#fr_direction_up").css("background","url('images/dt_arrow_up3.png')");
+                $("#fr_direction_down").css("background","url('images/dt_arrow_down3.png')");
+            }else if(liftrun.direction=="2"){
+                $("#direction").find("b").eq(0).attr("class","zt_off");
+                $("#direction").find("b").eq(1).attr("class","zt_on");
+                $("#fl_direction").attr("src","images/dt_arrow_down1.png");
+                $("#fr_direction").attr("src","images/dt_arrow_down2.png");
+                $("#fr_direction_up").css("background","url('images/dt_arrow_up3_2.png')");
+                $("#fr_direction_down").css("background","url('images/dt_arrow_down3_2.png')");
+            }else{
+                $("#direction").find("b").eq(0).attr("class","zt_off");
+                $("#direction").find("b").eq(1).attr("class","zt_off");
+                $("#fl_direction").attr("src","images/dt_arrow_none.png");
+                $("#fr_direction").attr("src","images/dt_arrow_none2.png");
+                $("#fr_direction_up").css("background","url('images/dt_arrow_up3_2.png')");
+                $("#fr_direction_down").css("background","url('images/dt_arrow_down3.png')");
+            }
+
+            //轿厢是否在门区
+            if(liftrun.iszone=="1"){
+                $("#iszone").find("b").eq(0).attr("class","zt_on");
+                $("#iszone").find("b").eq(1).attr("class","zt_off");
+
+            }else if(liftrun.iszone=="0"){
+                $("#iszone").find("b").eq(0).attr("class","zt_off");
+                $("#iszone").find("b").eq(1).attr("class","zt_on");
+            }
+            //关门到位
+            if(liftrun.doorstatus=="1"){
+                $("#doorstatus").find("b").eq(0).attr("class","zt_on");
+                $("#doorstatus").find("b").eq(1).attr("class","zt_off");
+                $("#fl_door").attr("src","images/dt_po_close.png");
+            }else if(liftrun.doorstatus=="0"){
+                $("#doorstatus").find("b").eq(0).attr("class","zt_off");
+                $("#doorstatus").find("b").eq(1).attr("class","zt_on");
+                $("#fl_door").attr("src","images/dt_po_on.png");
+            }
+            //上极限是否动作
+            if(liftrun.uplimit=="1"){
+                $("#uplimit").find("b").eq(0).attr("class","zt_on");
+                $("#uplimit").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.uplimit=="0"){
+                $("#uplimit").find("b").eq(0).attr("class","zt_off");
+                $("#uplimit").find("b").eq(1).attr("class","zt_on");
+            }
+            //下极限是否动作
+            if(liftrun.downlimit=="1"){
+                $("#downlimit").find("b").eq(0).attr("class","zt_on");
+                $("#downlimit").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.downlimit=="0"){
+                $("#downlimit").find("b").eq(0).attr("class","zt_off");
+                $("#downlimit").find("b").eq(1).attr("class","zt_on");
+            }
+            //轿厢报警按钮是否动作
+            if(liftrun.alarm=="1"){
+                $("#alarm").find("b").eq(0).attr("class","zt_on");
+                $("#alarm").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.alarm=="0"){
+                $("#alarm").find("b").eq(0).attr("class","zt_off");
+                $("#alarm").find("b").eq(1).attr("class","zt_on");
+            }
+            //轿厢是否有人
+            if(liftrun.passenger=="1"){
+                $("#passenger").find("b").eq(0).attr("class","zt_on");
+                $("#passenger").find("b").eq(1).attr("class","zt_off");
+            }else if(liftrun.passenger=="0"){
+                $("#passenger").find("b").eq(0).attr("class","zt_off");
+                $("#passenger").find("b").eq(1).attr("class","zt_on");
+            }
+
+            //通力的2部电梯没有数据,造的假
+
+/*            if(regcode == "31303201022010110052"){
+                $("#times").html(liftrun.times);
+                var tHours = Math.ceil(liftrun.times*20/3600);
+                $("#hours").html(tHours);
+            }else if(regcode == "31303201022010110053"){
+                $("#times").html(26422);
+                var tHours = Math.ceil(26422*20/3600);
+                $("#hours").html(tHours);
+            }else{*/
+                $("#hours").html(liftrun.hours);
+                $("#times").html(liftrun.times);
+/*
+            }
+*/
+
+
+            var floor = liftrun.floor;
+            $("#fl_floor").html(floor);
+            $("#fr_floor").html(floor);
+
+        },"json");
+        /*]]>*/
+    }
+
+
+
+    /*历史运行数据*/
+    function getDtlsyx(regcode,page) {
+        /*<![CDATA[*/
+        var url = "getDtlsyx?regcode="+regcode+"&page="+page;
+        $.get(url,function (data) {
+
+            var liftRunHistory = data.liftRunHistory;
+            var pages = data.pages;
+            var total = data.total;
+            var baseLift = data.baseLift;
+
+            var liftCode = baseLift.liftcode;
+
+            $("#lsyx_title").nextAll().remove();
+
+            for(var index in liftRunHistory){
+
+
+                var lift = liftRunHistory[index];
+
+                var isonline = lift.isonline;
+                if ("0" == isonline) {
+                    lift.isonline = "否";
+                }else if ("1" == isonline) {
+                    lift.isonline = "是";
+                }
+
+                var timestamps = lift.timestamps;
+                if (timestamps != null && timestamps.length > 12) {
+                    lift.timestamps = timestamps.substring(0, 4) + "-" + timestamps.substring(4, 6) + "-" + timestamps.substring(6, 8) +"<br/>" + " "
+                        + timestamps.substring(8, 10) + ":" + timestamps.substring(10, 12) + ":" + timestamps.substring(12, 14);
+                }
+
+                var maincontactor = lift.maincontactor;
+                if ("0" == maincontactor) {
+                    lift.maincontactor = "吸合";
+                }else if ("1" == maincontactor) {
+                    lift.maincontactor = "断开";
+                }else if (maincontactor == null) {
+                    lift.maincontactor = " ";
+                }
+
+                var runcontactor = lift.runcontactor;
+                if ("0" == runcontactor) {
+                    lift.runcontactor = "吸合";
+                }else if ("1" == runcontactor) {
+                    lift.runcontactor = "断开";
+                }else if (runcontactor == null) {
+                    lift.runcontactor = " ";
+                }
+
+                var circuit = lift.circuit;
+                if ("0" == circuit) {
+                    lift.circuit = "正常";
+                }else if ("1"==circuit) {
+                    lift.circuit = "断开";
+                }else if (circuit == null) {
+                    lift.circuit = " ";
+                }
+
+                var mode = lift.mode;
+                if ("0" == mode) {
+                    lift.mode = "停止服务";
+                }else if ("1" == mode) {
+                    lift.mode = "正常运行";
+                } else if ("2" == mode) {
+                    lift.mode = "检修";
+                } else if ("3" == mode) {
+                    lift.mode = "消防返回";
+                } else if ("4" == mode) {
+                    lift.mode = "应急电源运行";
+                } else if ("5" == mode) {
+                    lift.mode = "其他模式";
+                }else if (mode == null) {
+                    lift.mode = " ";
+                }
+
+                var carstatus = lift.carstatus;
+                if ("0" == carstatus) {
+                    lift.carstatus = "停止";
+                }else if ("1" == carstatus) {
+                    lift.carstatus = "运行";
+                }else if (carstatus == null) {
+                    lift.carstatus = " ";
+                }
+
+                var direction = lift.direction;
+                if ("0" == direction) {
+                    lift.direction = "无方向";
+                }else if ("1" == direction) {
+                    lift.direction = "上行";
+                }else if ("2" == direction) {
+                    lift.direction = "下行";
+                }else if (direction == null) {
+                    lift.direction = " ";
+                }
+
+                var iszone = lift.iszone;
+                if ("0" == iszone) {
+                    lift.iszone = "否";
+                }else if ("1" == iszone) {
+                    lift.iszone = "是";
+                }else if (iszone == null) {
+                    lift.iszone = " ";
+                }
+
+                var floor = lift.floor;
+                if(floor == null){
+                    lift.floor = " ";
+                }
+
+                var doorstatus = lift.doorstatus;
+                if ("0" == doorstatus) {
+                    lift.doorstatus = "否";
+                }else if ("1" == doorstatus) {
+                    lift.doorstatus = "是";
+                }else if (doorstatus == null) {
+                    lift.doorstatus = " ";
+                }
+
+                var uplimit = lift.uplimit;
+                if ("0" == uplimit) {
+                    lift.uplimit = "否";
+                }else if ("1" == uplimit) {
+                    lift.uplimit = "是";
+                }else if (uplimit == null) {
+                    lift.uplimit = " ";
+                }
+
+                var downlimit = lift.downlimit;
+                if ("0" == downlimit) {
+                    lift.downlimit = "否";
+                }else if ("1"==downlimit) {
+                    lift.downlimit = "是";
+                }else if (downlimit == null) {
+                    lift.downlimit = " ";
+                }
+
+                var alarm = lift.alarm;
+                if ("0" == alarm) {
+                    lift.alarm = "否";
+                }else if ("1" == alarm) {
+                    lift.alarm = "是";
+                }else if (alarm == null) {
+                    lift.alarm = " ";
+                }
+
+                var passenger = lift.passenger;
+                if ("0" == passenger) {
+                    lift.passenger = "否";
+                }else if ("1"==passenger) {
+                    lift.passenger = "是";
+                }else if (passenger == null) {
+                    lift.passenger = " ";
+                }
+
+                var hours = lift.hours;
+                if (hours == null) {
+                    lift.hours = " ";
+                }
+
+                var times = lift.times;
+                if (times == null) {
+                    lift.times = " ";
+                }
+
+                var regcode = "&nbsp;"+lift.regcode.substring(0,10) +"&nbsp;&nbsp;<br/>&nbsp;"+
+                    lift.regcode.substring(10,30)+"&nbsp;&nbsp;&nbsp;";
+                var tr = $("<tr></tr>");
+                var td1 = $("<td width='1%'>"+regcode+"</td>"); //注册码
+                tr.append(td1);
+                var td11 = $("<td width='1%'>"+liftCode+"</td>"); //识别码
+                tr.append(td11);
+                var td2 = $("<td>"+lift.timestamps+"</td>");//更新时间
+                tr.append(td2);
+
+               /* var td3 = $("<td>"+lift.carstatus+"</td>");//运行模式
+                tr.append(td3);*/
+                var td4 = $("<td>"+lift.direction+"</td>"); //运行方向
+                tr.append(td4);
+
+                var td5 = $("<td>"+lift.floor+"</td>");//当前楼层
+                tr.append(td5);
+
+                var td6 = $("<td>"+lift.hours+"</td>");//累计运行小时数
+                tr.append(td6);
+
+                var td7 = $("<td>"+lift.times+"</td>");//累计运行次数
+                tr.append(td7);
+
+                var td8 = $("<td><a href='#' class='view1' onclick='getlsyxdetail(\""+lift.maincontactor+"\",\""
+                 +lift.runcontactor+"\",\""+lift.circuit+"\",\""+lift.mode+"\",\""
+                 +lift.carstatus+"\",\""+lift.iszone+"\",\""+lift.floor+"\",\""
+                 +lift.doorstatus+"\",\""+lift.uplimit+"\",\""+lift.downlimit+"\",\""
+                 +lift.alarm+"\",\""+lift.passenger+"\",\""+lift.hours+"\",\""+lift.times+"\")'>查看</a></td>");//查看
+                 tr.append(td8);
+
+                /* var td9 = $("<td><a href='#' class='view1'>查看</a></td>");//查看
+                 tr.append(td9);*/
+                $("#lsyxlist").append(tr);
+
+            }
+
+            lsyxPages = pages-1;
+            $("#lsyx_pages").html(pages);
+            $("#lsyx_total").html(total);
+            $("#lsyx_page").html(page+1);
+
+        },"json");
+        /*]]>*/
+    }
+
+
+    function  getlsyxdetail(maincontactor,runcontactor,circuit,mode,carstatus,
+                            iszone,floor,doorstatus,uplimit,downlimit,alarm,passenger,hours,times) {
+
+        $("#lsyx_yxzt").show();
+
+        $("#lsyx_yxzt").find("div").eq(0).children("span").html(maincontactor);
+        $("#lsyx_yxzt").find("div").eq(1).children("span").html(runcontactor);
+        $("#lsyx_yxzt").find("div").eq(2).children("span").html(circuit);
+        $("#lsyx_yxzt").find("div").eq(3).children("span").html(mode);
+        $("#lsyx_yxzt").find("div").eq(4).children("span").html(carstatus);
+        $("#lsyx_yxzt").find("div").eq(5).children("span").html(iszone);
+        $("#lsyx_yxzt").find("div").eq(6).children("span").html(floor);
+        $("#lsyx_yxzt").find("div").eq(7).children("span").html(doorstatus);
+        $("#lsyx_yxzt").find("div").eq(8).children("span").html(uplimit);
+        $("#lsyx_yxzt").find("div").eq(9).children("span").html(downlimit);
+        $("#lsyx_yxzt").find("div").eq(10).children("span").html(alarm);
+        $("#lsyx_yxzt").find("div").eq(11).children("span").html(passenger);
+        $("#lsyx_yxzt").find("div").eq(12).children("span").html(hours);
+        $("#lsyx_yxzt").find("div").eq(13).children("span").html(times);
+    }
+
+
+
+
+    $(document).mousedown(function(e){
+        if($(e.target).closest("#lsgz_yxzt").length==0){
+            $("#lsyx_yxzt").hide();
+        }
+    })
+
+    //历史故障记录
+    function getDtlsgz(regcode,page) {
+        /*<![CDATA[*/
+        var url = "getDtlsgz?regcode="+regcode+"&page="+page;
+        $("#lsgz_title").nextAll().remove();
+        $.get(url,function (data) {
+            var list = data.liftfaultpage;
+            var pages = data.pages;
+            var total = data.total;
+
+            for (var i=0;i<list.length;i++)
+            {
+                var tr = $("<tr></tr>");
+                var starttime = "";
+                if(list[i].starttime!=null&&list[i].starttime.length>12){
+                    starttime = list[i].starttime.substring(0,4)+"-"+list[i].starttime.substring(4,6)+"-"+list[i].starttime.substring(6,8)+"<br/>"
+                        + list[i].starttime.substring(8,10)+":"+list[i].starttime.substring(10,12);
+                }
+                var td1 = $("<td>"+starttime+"</td>"); //发生时间
+                tr.append(td1);
+                var td2 = $("<td>"+list[i].faultCode.content+"</td>");//故障类型
+                tr.append(td2);
+                var dealtime = "";
+                if(list[i].dealtime!=null&&list[i].dealtime.length>12){
+                    dealtime = list[i].dealtime.substring(0,4)+"-"+list[i].dealtime.substring(4,6)+"-"+list[i].dealtime.substring(6,8)+"<br/>"
+                        + list[i].dealtime.substring(8,10)+":"+list[i].dealtime.substring(10,12);
+                }
+                var td3 = $("<td>"+dealtime+"</td>");//处置时间
+                tr.append(td3);
+                var td4 = $("<td>"+list[i].dealperson+"</td>"); //处置人
+                tr.append(td4);
+                if(list[i].istrap=="0"){
+                    list[i].istrap="否";
+                }else{
+                    list[i].istrap="是";
+                }
+                var td5 = $("<td>"+list[i].istrap+"</td>");//是否困人
+                tr.append(td5);
+                if(list[i].selfrepair=="0"){
+                    list[i].selfrepair="否";
+                }else{
+                    list[i].selfrepair="是";
+                }
+                var td6 = $("<td>"+list[i].selfrepair+"</td>");//是否自我恢复
+                tr.append(td6);
+                var td7 = $("<td><a href='#' class='view1' onclick='getLsgzYxzt(\""+list[i].maincontactor+"\",\""
+                    +list[i].runcontactor+"\",\""+list[i].circuit+"\",\""
+                    +list[i].carstatus+"\",\""
+                    +list[i].direction+"\",\""+list[i].uplimit+"\",\""
+                    +list[i].downlimit+"\",\""+list[i].alarm+"\",\""
+                    +list[i].iszone+"\",\""+list[i].floor+"\",\""+list[i].doorstatus+"\",\""+list[i].hours+"\",\""+list[i].times+"\")'>查看</a></td>");//查看
+                tr.append(td7);
+               /* var td8 = $("<td><a href='#' class='view1'>查看</a></td>");//查看
+                tr.append(td8);*/
+                $("#lsgzlist").append(tr);
+            }
+            lsgzPages = pages-1;
+            $("#lsgz_pages").html(pages);
+            $("#lsgz_total").html(total);
+            $("#lsgz_page").html(page+1);
+        },"json");
+        /*]]>*/
+    }
+
+    function getLsgzYxzt(maincontactor,runcontactor,circuit,carstatus,direction,uplimit,
+                         downlimit,alarm,iszone,floor,doorstatus,hours,times){
+        $("#lsgz_yxzt").show();
+
+        if(maincontactor=="0"){
+            maincontactor="吸合";
+        }else if(maincontactor=="1"){
+            maincontactor="断开";
+        }else{
+            maincontactor="";
+        }
+
+        if(runcontactor=="0"){
+            runcontactor="吸合";
+        }else if(runcontactor=="1"){
+            runcontactor="断开";
+        }else{
+            runcontactor="";
+        }
+
+        if(circuit=="0"){
+            circuit="正常";
+        }else if(circuit=="1"){
+            circuit="断开";
+        }else{
+            circuit="";
+        }
+
+        if(carstatus=="0"){
+            carstatus="停止";
+        }else if(iszone=="1"){
+            carstatus="运行";
+        }else{
+            carstatus="";
+        }
+
+        if(direction=="0"){
+            direction="无方向";
+        }else if(direction=="1"){
+            direction="上行";
+        }else if(direction=="2"){
+            direction="下行";
+        }else{
+            direction="";
+        }
+
+        if(uplimit=="0"){
+            uplimit="否";
+        }else if(uplimit=="1"){
+            uplimit="是";
+        }else{
+            uplimit="";
+        }
+
+        if(downlimit="0"){
+            downlimit="否";
+        }else if(downlimit="1"){
+            downlimit="是";
+        }else{
+            downlimit="";
+        }
+
+        if(alarm=="0"){
+            alarm="否";
+        }else if(alarm=="1"){
+            alarm="是";
+        }else{
+            alarm="";
+        }
+
+        if(iszone=="0"){
+            iszone="否";
+        }else if(iszone=="1"){
+            iszone="是";
+        }else{
+            iszone="";
+        }
+
+        if(doorstatus=="0"){
+            doorstatus="否";
+        }else if(doorstatus=="1"){
+            doorstatus="是";
+        }else{
+            doorstatus="";
+        }
+
+        if(hours == "undefined" || hours == null || hours == 0 ){
+            hours = "";
+        }
+        if(times == "undefined" || times == null|| times == 0 ){
+            times = "";
+        }
+
+        $("#lsgz_yxzt").find("div").eq(0).children("span").html(maincontactor);
+        $("#lsgz_yxzt").find("div").eq(1).children("span").html(runcontactor);
+        $("#lsgz_yxzt").find("div").eq(2).children("span").html(circuit);
+        $("#lsgz_yxzt").find("div").eq(3).children("span").html(carstatus);
+        $("#lsgz_yxzt").find("div").eq(4).children("span").html(direction);
+        $("#lsgz_yxzt").find("div").eq(5).children("span").html(uplimit);
+        $("#lsgz_yxzt").find("div").eq(6).children("span").html(downlimit);
+        $("#lsgz_yxzt").find("div").eq(7).children("span").html(alarm);
+        $("#lsgz_yxzt").find("div").eq(8).children("span").html(iszone);
+        $("#lsgz_yxzt").find("div").eq(9).children("span").html(floor);
+        $("#lsgz_yxzt").find("div").eq(10).children("span").html(doorstatus);
+        $("#lsgz_yxzt").find("div").eq(11).children("span").html(hours);
+        $("#lsgz_yxzt").find("div").eq(12).children("span").html(times);
+    }
+
+    $(document).mousedown(function(e){
+        if($(e.target).closest("#lsgz_yxzt").length==0){
+            $("#lsgz_yxzt").hide();
+        }
+    })
+
+
+    //历史维保记录
+    function getDtlswb(regcode,page) {
+        /*<![CDATA[*/
+        var url = "getDtlswb?regcode="+regcode+"&page="+page;
+        $("#lswb_title").nextAll().remove();
+        $.get(url,function (data) {
+            var list = data.wbFormPage;
+
+            var pages = data.pages;
+            var total = data.total;
+            for (var i=0;i<list.length;i++)
+            {
+                var tr = $("<tr></tr>");
+/*                var starttime = "";
+                if(list[i].starttime!=null&&list[i].starttime.length>12){
+                    starttime = list[i].starttime.substring(0,4)+"-"+list[i].starttime.substring(4,6)+"-"+list[i].starttime.substring(6,8)+"<br/>"
+                        + list[i].starttime.substring(8,10)+":"+list[i].starttime.substring(10,12);
+                }*/
+                var td1 = $("<td>"+list[i].maintStartTime+"</td>"); //开始维保时间
+                tr.append(td1);
+/*                var stoptime = "";
+                if(list[i].stoptime!=null&&list[i].stoptime.length>12){
+                    stoptime = list[i].stoptime.substring(0,4)+"-"+list[i].stoptime.substring(4,6)+"-"+list[i].stoptime.substring(6,8)+"<br/>"
+                        + list[i].stoptime.substring(8,10)+":"+list[i].stoptime.substring(10,12);
+                }*/
+                var td2 = $("<td>"+list[i].maintEndTime+"</td>");//结束维保时间
+                tr.append(td2);
+                if(list[i].maintainId!=null){
+                    var td3 = $("<td>"+list[i].maintainId.maintainName+"</td>");//维保单位
+                }else{
+                    var td3 = $("<td>"+""+"</td>");//维保单位
+                }
+                tr.append(td3);
+
+                if(list[i].clientId!=null){
+                    var td4 = $("<td>"+list[i].clientId.peopleName+"</td>");//维保人员
+                }else{
+                    var td4 = $("<td>"+""+"</td>");//维保单位
+                }
+
+                tr.append(td4);
+                var maintType = "";
+                if(list[i].maintType=="00"){
+                    maintType="半月保";
+                }else if(list[i].maintType=="01"){
+                    maintType="月保";
+                }else if(list[i].maintType=="02"){
+                    maintType="季度保";
+                }else if(list[i].maintType=="03"){
+                    maintType="半年保";
+                }else if(list[i].maintType=="04"){
+                    maintType="年保";
+                }
+                var td5 = $("<td>"+maintType+"</td>");//维保类型
+                tr.append(td5);
+//                var td6 = $("<td><a href='#' class='view1'>查看</a></td>");//查看
+//                tr.append(td6);
+                $("#lswblist").append(tr);
+            }
+            lswbPages = pages-1;
+            $("#lswb_pages").html(pages);
+            $("#lswb_total").html(total);
+            $("#lswb_page").html(page+1);
+        },"json");
+        /*]]>*/
+    }
+
+
+    window.setInterval(function () {
+        getDtjbxx(regcode);
+        getDtyxzt(regcode);
+    }, 3*1000);
+</script>
+
+</body>
+</html>

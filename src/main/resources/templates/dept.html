@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+</head>
+<body>
+<table>
+    <tr>
+        <th>id</th>
+        <th>deptName</th>
+        <th>deptCode</th>
+    </tr>
+    <tr th:each="test : ${deptList}">
+        <td th:text="${test.id}">Onions</td>
+        <td th:text="${test.deptName}">2.41</td>
+        <td th:text="${test.deptCode}">yes</td>
+    </tr>
+</table>
+</body>
+</html>

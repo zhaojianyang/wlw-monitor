@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <title>导出数据</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/css/rundata.css}"/>
+
+
+
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/bootstrap.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/My97DatePicker/WdatePicker.js}"></script>
+
+
+    <style type="text/css">
+        .title{
+            display: block;
+            width: 130px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+        .dropdown-menu {
+            position: absolute;
+            top: 103%;
+            left: 0;
+            z-index: 1000;
+            display: none;
+            float: left;
+            list-style: none;
+            text-shadow: none;
+            max-height: 400; //设置最大高度为400
+        overflow:scroll;//设置可滚动
+        padding: 5px;
+            margin:0px;
+            -webkit-box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+            -moz-box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 8px rgba(120, 234, 61, 0.55);
+            font-size: 14px;
+            font-family: "Segoe UI",Helvetica, Arial, sans-serif;
+            border: 1px solid #ddd;
+        }
+
+    </style>
+
+</head>
+
+<body style="background:#f5f3f0">
+
+<div class="tc_dtxx">
+
+<!--
+
+    <div id="startTimeSure" style="width:45%; float: left;margin-top: 20%;margin-left: 8%;">
+        <label class="layui-form-label" style="width: 100px;">起始时间：</label>
+        <div class="layui-input-block">
+            <select class="input-md form-control" id="startTime" name="startTime" style="width:60%;" >
+                <option value ="">请选择</option>
+                <option th:each="time:${timeList}" th:value="${time.reallytime}" th:text="${time.timestamps}">&#45;&#45;</option>
+
+            </select>
+        </div>
+    </div>
+
+
+    <div id="endTimeSure" style="width:45%; float: left;margin-top: 20%;margin-left: -3%;">
+        <label class="layui-form-label" style="width: 100px;">结束时间：</label>
+        <div class="layui-input-block">
+            <select class="input-md form-control" id="endTime" name="endTime" style="width:60%;"  >
+                <option value ="">请选择</option>
+                <option th:each="time:${timeList}" th:value="${time.reallytime}" th:text="${time.timestamps}">&#45;&#45;</option>
+
+            </select>
+        </div>
+    </div>
+
+-->
+
+
+    <table style="margin-left: 20%;margin-top: 24%;">
+        <tr>
+
+            <th width="9%">导出的时间区间:</th>
+            <td width="35%">
+                <input type="text" id="cdateMin" name="cdateMin"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',maxDate:'#F{$dp.$D(\'cdateMax\')}'})"
+                        style="width: 140px"/>
+<!--                <input type="text" id="cdateMin" name="cdateMin"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'cdateMax\')}'})"
+                        style="width: 150px"/>
+                -->
+                <span style="margin-left: 1%;">一</span>
+                <input type="text" id="cdateMax" name="cdateMax"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'cdateMin\')}'})"
+                        style="width: 140px;margin-left: 1%;"/>
+                <!--<input type="text" id="cdateMax" name="cdateMax"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'cdateMin\')}'})"
+                        style="width: 150px"/>-->
+            </td>
+<!--
+            <td width="35%">
+                <span>导出的时间区间：</span>
+                <input type="text" id="cdateMin" name="cdateMin"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'cdateMax\')}'})"
+                        style="width: 150px"/>
+                <span>-</span>
+                <input type="text" id="cdateMax" name="cdateMax"  class="Wdate"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'cdateMin\')}'})"
+                        style="width: 150px"/>
+            </td>-->
+        </tr>
+    </table>
+
+
+
+<!--
+
+
+    <div class="layui-input-block" style="width: 150px; float: right;
+                    margin-top:18%;margin-right: 42%;" id="toExport">
+        <button class="layui-btn"  onclick="toExport()">导出数据</button>
+        <button class="layui-btn layui-btn-primary" onclick="cancelExport()" style="margin-left: 70%;margin-top: -38%;">取消</button>
+
+    </div>
+-->
+<!--
+
+    <div class="layui-input-block" style="width: 150px; float: right;margin-top:18%;margin-right: 42%;" >
+
+        <input value="111111" id="regcode"/>
+        <input value="2222" id="isonline"/>
+        <input value="33333" id="deptId"/>
+
+    </div>
+-->
+
+</div>
+
+<!--
+
+<script type="text/javascript">
+
+    function cancelExport() {
+        var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+        parent.layer.close(index);
+    }
+    function toExport() {
+        var regcode = $("#regcode").val();
+        var isonline = $("#isonline").val();
+        var deptId = $("#deptId").val();
+
+
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        console.info(startTime,"startTime")
+        console.info(endTime,"endTime")
+        console.info(startTime>=endTime)
+
+
+        var url = "/jshx/exportRealtimeExcelData?regcode="+regcode+"&isonline;"+isonline+
+            "&deptId;"+deptId+"&startTime;"+startTime+"&endTime;"+endTime;
+        url = url.replace(";","=").replace(";","=").replace(";","=").replace(";","=");
+        window.location.href = url
+
+    }
+</script>
+-->
+
+</body>
+</html>

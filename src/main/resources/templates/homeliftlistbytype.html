@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta charset="UTF-8"/>
+    <title>电梯运行监测</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/new-css/bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/hik-bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/css/rundata.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+
+    <style>
+        .aaa{
+
+            margin-top: 326px;
+        }
+        .bbb{
+            margin-top:  326px;
+        }
+
+        .ccc{
+            margin-top: 326px;
+        }
+
+        .ddd{
+           margin-top: 655px;
+           margin-bottom: 5%;
+        }
+
+
+        dd {
+            line-height: 36px;
+
+        }
+
+        /*li {*/
+            /*list-style: none;*/
+            /*line-height: 66px;*/
+        /*}*/
+
+        .top_ceng {
+            margin-top: 5%;
+            margin-left: 44px;
+            margin-bottom: -4%;
+            /*position: absolute;*/
+            background: white;
+        }
+
+        .nav-list {
+            padding-left: 2%;
+            padding-right: 0px;
+            margin-bottom: 0;
+        }
+        .iteminfo>li {
+            width:  106%;
+            line-height: 27px;
+        }
+        .nav-list [class^="icon-"], .nav-list [class*=" icon-"] {
+             margin-right: -0.5px;
+         }
+    </style>
+
+</head>
+<body>
+
+<selection layout:fragment="content">
+
+    <div class="container-fluid">
+
+
+            <div class="sitemap" >
+                <div class="left">
+                    <ul class="breadcrumb">
+                        <li class="active">当前位置 <span class="divider">:</span></li>
+                        <li class="active"><a href="/jshx/home" style="color: #999">首页</a> <span class="divider">/</span></li>
+                        <li class="active">电梯运行监测</li>
+                    </ul>
+                </div>
+                <!--<div class="right">-->
+                    <!--<input type="button" class="button-navi button-return" onclick="window.history.back(-1);" hidefocus="true" value="返回" url="/WorkMonitor/Index" />-->
+                <!--</div>-->
+            </div>
+
+        <div style="min-width: 1240px;position: relative;" id = "liftTable" >
+            <!--<div class="widget" style="width: 400px; margin: 0 0 10px 10px; float: left;">
+                <div class="widget-head">新城市广场摩尔街区</div>
+                <div class="widget-content" style="height: 260px;">
+                    <table style="margin: 10px;">
+                        <tbody><tr>
+                            <td rowspan="4">
+                                <object >
+                                    <img src="images/lift.png" />
+                                </object>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="height: 220px;">
+                                <ul class="nav nav-list iteminfo">
+                                    &lt;!&ndash;<li class="divider"></li>&ndash;&gt;
+                                    <li title="使用地点">
+                                        <i class="icon-tag"></i>&nbsp;新城市广场摩尔街区
+                                    </li>
+                                    <li title="注册码">
+                                        <i class="icon-barcode"></i>&nbsp;11111111
+                                    </li>
+                                    <li title="使用单位">
+                                        <i class="icon-home"></i>&nbsp;江苏摩尔商业管理有限...
+                                    </li>
+                                    <li title="维保单位">
+                                        <i class="icon-wrench"></i>&nbsp;
+                                    </li>
+                                    <li title="电梯地址">
+                                        <i class="icon-map-marker"></i>&nbsp;鼓楼区
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="text-align: right;">
+                                    <input type="button" value="查看详情" class="btn" name="ViewDetail" onclick="ViewElevMonitor('/Monitor/Monitor', '11111111', '11111111', '', '');" />
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>-->
+
+
+        </div>
+
+
+        <div style="text-align: center;display: block;" id="onload">
+            <iframe scrolling="no"  class="layui-layer-load"
+                    frameborder="0"
+                    style="height: 350px;"></iframe>
+
+        </div>
+
+
+        <div class="panel panel-default" style="display: block;margin-bottom: 30px;">
+
+            <div class="panel-footer">
+
+
+                <div class="laypage_main laypageskin_default" style="float: left;margin-left: 35%;position: relative;" id="totalDiv">
+                    <span class="laypage_curr" id="totalNum" style="position: relative;"></span>
+                </div>
+                <div id="content1" style="float: right;margin-right: 2%;margin-bottom: 2%;position: relative;"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <script type="text/javascript">
+
+        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        console.info(userAgent,"userAgent")
+        $(function () {
+            $("li.layui-nav-item").eq(3).addClass("layui-this");
+
+            var url = location.search;
+            var searchValue = url.split("?searchValue=")[1];
+
+            if(searchValue != ""){
+                getAllLiftsByDifferentTypeId(searchValue,1)
+            }
+
+
+
+        });
+
+
+        function getAllLiftsByDifferentTypeId(searchValue,page) {
+            document.getElementById("onload").style.display = "block";
+            $("table tr.info").nextAll().remove();
+            $("#liftTable").empty();
+            var url = "getAllLiftsByDifferentTypeId?searchValue="+searchValue+"&page;"+page;
+
+            url = url.replace(";","=");
+
+            $.get(url,function (data) {
+                document.getElementById("onload").style.display = "none";
+               var width = $(".container-fluid").width() - 54 ;
+               var useWidth = Math.ceil(width/3) ;
+
+               var totalNum = data.total;
+
+                $("#totalNum").html("总共&nbsp;&nbsp;" + totalNum + "&nbsp;&nbsp;条记录");
+
+                var liftList = data.rundatas;
+
+
+                var length = liftList.length
+
+                if(length == 4 || length == 5){
+                    $("#content1").removeClass("aaa")
+                    $("#content1").addClass("bbb")
+                    document.getElementById("totalDiv").style.position = "absolute";
+                    $("#totalDiv").addClass("ddd")
+                }else if(length == 2 ){
+                    document.getElementById("totalDiv").style.position = "relative";
+                    $("#totalDiv").removeClass("ccc")
+                    $("#totalDiv").removeClass("ddd")
+                    $("#content1").removeClass("aaa")
+                    /*$("#content1").addClass("bbb")*/
+                }else if( length == 1){
+                    document.getElementById("totalDiv").style.position = "absolute";
+                    $("#content1").removeClass("bbb")
+                    $("#content1").addClass("aaa")
+                    $("#totalDiv").removeClass("ddd")
+                    $("#totalDiv").addClass("ccc")
+                }else{
+                    $("#content1").removeClass("aaa")
+                    $("#content1").removeClass("bbb")
+                    document.getElementById("totalDiv").style.position = "relative";
+                    $("#totalDiv").removeClass("ccc")
+                    $("#totalDiv").removeClass("ddd")
+                }
+
+                var pages = data.pages;
+
+                for(var index in liftList){
+                    var lift = liftList[index];
+
+                    var liftAddress = lift.liftAddress;
+
+                    if(liftAddress.length >33){
+                        liftAddress = liftAddress.substr(0,34);
+                    }
+                    if((324 - useWidth)>= 0){
+                        var companyName = lift.companyName.substr(0,13);
+                    }else{
+                        var companyName = lift.companyName;
+                    }
+                    var div = '<div class="widget" style="width:' + useWidth + 'px; margin: 0 0 10px 8px; float: left;">' +
+
+                    '<div class="widget-head">' + lift.maintName + '</div>' +
+                    '<div class="top_ceng" id="topCeng'+lift.liftCode+'" style="background: #fff; "><b><img id="fl_direction'+lift.liftCode+'" /></b><span id="fl_floor'+lift.liftCode+'"></span></div>'+
+
+                    '<div class="widget-content" style="height: 260px;">' +
+                        '<table style="margin: 10px;">' + '<tbody><tr>' +
+                        '<td rowspan="4" >' + '<object ><img id="fl_door'+lift.liftCode+'" src="images/dt_po_close.png" style="margin-top: 10%;height: 95%;width:95%;max-width: 170px;min-width: 130px;"/>' + '</object>' +
+                        '</td></tr><tr><td style="height: 220px;">' +
+                        '<ul class="nav nav-list iteminfo" style="margin-right: 2px;margin-left: 0%;margin-top: 10%;">' +
+                        '<!--<li class="divider"></li>-->' +
+                        '<li title="用途类型">' +
+                        '<i class="icon-tag"></i>&nbsp;' + lift.placeType + '</li>' +
+                        '<li title="识别码">' +
+                        '<i class="icon-barcode"></i>&nbsp;' + lift.liftCode + '</li>' +
+                        '<li title="使用单位">'+
+                        '<i class="icon-home"></i>&nbsp;' + lift.companyName + '</li>' +
+                        '<li title="维保单位">' +
+                        '<i class="icon-wrench"></i>&nbsp;' + lift.maintName + '</li>' +
+                        '<li title="使用地点">' +
+                        '<i class="icon-map-marker"></i>&nbsp;' + lift.liftAddress + '</li>' +
+                        '</ul></td></tr><tr><td>' +
+                        '<div style="text-align: right;">' +
+                        //'<input type="button" value="查看详情" class="btn" name="ViewDetail" onclick="showLiftMapDetail(\''+lift.regcode +'\')"/>' +
+                        '<input type="button" value="查看详情" class="btn" name="ViewDetail" onclick="currentstate(\''+lift.regcode +'\')" style="margin-top: -1%;"/>' +
+                        '</div></td> </tr></tbody></table></div></div>';
+                    $("#liftTable").append(div);
+                    getRunDetail(lift);
+                }
+
+        /*        setTimeout(function () {
+                    var pageContent = $("#content1").html();
+
+                    if(pageContent == ""){
+                        document.getElementById("totalDiv").style.position = "absolute";
+                    }else{
+                        document.getElementById("totalDiv").style.position = "relative";
+                    }
+                },200);
+*/
+                laypage({
+                    cont: 'content1',
+                    pages: pages,
+                    curr: page,
+                    jump: function (obj, first) {
+
+                        if (!first) {
+                            clearInterval(oneTime);
+                            getAllLiftsByDifferentTypeId(searchValue,obj.curr);
+                        }
+                    }
+                });
+
+
+               var oneTime = window.setInterval(function () {
+                    for(var i in liftList){
+                        getRunDetail(liftList[i]);
+                    }
+                },3*1000);
+
+
+
+
+            },"json");
+
+        }
+
+
+        function getRunDetail(lift) {
+            $.get("getDtyxzt?regcode="+lift.regcode,function (data) {
+                var liftrun = data.liftrun;
+                var floor = liftrun.floor;
+
+                var doorId = "#fl_door"+lift.liftCode;
+                //关门到位
+                if(liftrun.doorstatus=="1"){
+                    $(doorId).attr("src","images/dt_po_close.png");
+                }else if(liftrun.doorstatus=="0"){
+                    $(doorId).attr("src","images/dt_po_on.png");
+                }else{
+                    $(doorId).attr("src","images/dt_po_close.png");
+                }
+
+                var directionId = "#fl_direction"+lift.liftCode;
+
+                //方向
+                if(liftrun.direction=="1"){
+                    $(directionId).attr("src","images/dt_arrow_up1.png");
+                }else if(liftrun.direction=="2"){
+                    $(directionId).attr("src","images/dt_arrow_down1.png");
+                }else{
+                    $(directionId).attr("src","images/dt_arrow_none.png");
+                }
+
+                var floorId = "#fl_floor"+lift.liftCode;
+                $(floorId).html(floor);
+
+                var backgroundId = "topCeng"+lift.liftCode;
+                document.getElementById(backgroundId).style.background = "#000000";
+
+            });
+
+        }
+
+
+
+        //之前做的会跳转到地图中的定位点的方法
+        function showLiftMapDetail(regcode) {
+            window.location.href ='/jshx/home?regcode='+regcode;
+        }
+
+
+
+
+        function currentstate(regcode){
+            /*<![CDATA[*/
+
+            layer.open({
+                type: 2,
+                title: '电梯实时状态',
+                shade: [0],
+                area: ['900px', '540px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['rundetail?regcode='+regcode, 'no'], //iframe的url，no代表不显示滚动条
+                /* btn: ['查看电梯', '关闭窗口'],
+                 success: function(layero){
+                 var btn = layero.find('.layui-layer-btn');
+                 btn.find('.layui-layer-btn0').attr({
+                 href: 'health'
+                 });
+                 }*/
+            });
+            /*]]>*/
+        }
+
+
+
+
+
+    </script>
+
+
+
+</selection>
+
+
+
+
+
+</body>
+</html>

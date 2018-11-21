@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}"/>
+    <script th:src="@{/js/jquery.min.js}"></script>
+
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div style="height: 380px;overflow-y: auto;">
+            <table style="width: 100%;" class="table table-hover">
+                <tr>
+                    <td class="detail-title">电梯注册码:</td>
+                    <td class="detail-info" th:text="${liftfault.regcode}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">故障发生时间:</td>
+                    <td class="detail-info" th:text="${#strings.substring(liftfault.starttime,0,4)}+'-'
+                    +${#strings.substring(liftfault.starttime,4,6)}
+                    +'-'+${#strings.substring(liftfault.starttime,6,8)}
+                    +' '
+                    +${#strings.substring(liftfault.starttime,8,10)}
+                    +':'+${#strings.substring(liftfault.starttime,10,12)}
+                    +':'+${#strings.substring(liftfault.starttime,12,14)}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">故障类型:</td>
+                    <td class="detail-info" th:text="${liftfault.faultCode.content}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">处置状态:</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='00'">处置完成</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='01'">故障发生</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='02'">发出通知</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='03'">处置响应</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='04'">处置到场</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}=='05'">误报</td>
+                    <td class="detail-info" th:if="${liftfault.dealstatus}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">处置时间:</td>
+                    <td class="detail-info" th:text="${#strings.substring(liftfault.dealtime,0,4)}+'-'
+                    +${#strings.substring(liftfault.dealtime,4,6)}
+                    +'-'+${#strings.substring(liftfault.dealtime,6,8)}
+                    +' '
+                    +${#strings.substring(liftfault.dealtime,8,10)}
+                    +':'+${#strings.substring(liftfault.dealtime,10,12)}
+                    +':'+${#strings.substring(liftfault.dealtime,12,14)}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">处置人:</td>
+                    <td class="detail-info" th:text="${liftfault.dealperson}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">现场确认是否困人:</td>
+                    <td class="detail-info" th:if="${liftfault.istrap}=='0'">不困人</td>
+                    <td class="detail-info" th:if="${liftfault.istrap}=='1'">困人</td>
+                    <td class="detail-info" th:if="${liftfault.istrap}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">是否自恢复:</td>
+                    <td class="detail-info" th:if="${liftfault.selfrepair}=='0'">否</td>
+                    <td class="detail-info" th:if="${liftfault.selfrepair}=='1'">是</td>
+                    <td class="detail-info" th:if="${liftfault.selfrepair}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">处置说明:</td>
+                    <td class="detail-info" th:text="${liftfault.dealnote}"></td>
+                </tr>
+                <tr>
+                    <td class="detail-title">总接触器:</td>
+                    <td class="detail-info" th:if="${liftfault.maincontactor}=='0'">吸合</td>
+                    <td class="detail-info" th:if="${liftfault.maincontactor}=='1'">断开</td>
+                    <td class="detail-info" th:if="${liftfault.maincontactor}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">运行接触器:</td>
+                    <td class="detail-info" th:if="${liftfault.runcontactor}=='0'">吸合</td>
+                    <td class="detail-info" th:if="${liftfault.runcontactor}=='1'">断开</td>
+                    <td class="detail-info" th:if="${liftfault.runcontactor}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">安全回路:</td>
+                    <td class="detail-info" th:if="${liftfault.circuit}=='0'">正常</td>
+                    <td class="detail-info" th:if="${liftfault.circuit}=='1'">断开</td>
+                    <td class="detail-info" th:if="${liftfault.circuit}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">轿厢运行状态:</td>
+                    <td class="detail-info" th:if="${liftfault.carstatus}=='0'">停止</td>
+                    <td class="detail-info" th:if="${liftfault.carstatus}=='1'">运行</td>
+                    <td class="detail-info" th:if="${liftfault.carstatus}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">方向:</td>
+                    <td class="detail-info" th:if="${liftfault.direction}=='0'">无方向</td>
+                    <td class="detail-info" th:if="${liftfault.direction}=='1'">上行</td>
+                    <td class="detail-info" th:if="${liftfault.direction}=='2'">下行</td>
+                    <td class="detail-info" th:if="${liftfault.direction}==null"> </td>
+                </tr>
+
+                <tr>
+                    <td class="detail-title">轿厢是否在门区:</td>
+                    <td class="detail-info" th:if="${liftfault.iszone}=='0'">否</td>
+                    <td class="detail-info" th:if="${liftfault.iszone}=='1'">是</td>
+                    <td class="detail-info" th:if="${liftfault.direction}==null"> </td>
+                </tr>
+
+                <tr>
+                    <td class="detail-title">当前物理楼层:</td>
+                    <td class="detail-info" th:text="${liftfault.floor}"></td>
+                </tr>
+
+                <tr>
+                    <td class="detail-title">关门到位:</td>
+                    <td class="detail-info" th:if="${liftfault.doorstatus}=='0'">无关门到位信号</td>
+                    <td class="detail-info" th:if="${liftfault.doorstatus}=='1'">关门到位</td>
+                    <td class="detail-info" th:if="${liftfault.doorstatus}==null"> </td>
+                </tr>
+
+                <tr>
+                    <td class="detail-title">上极限是否动作:</td>
+                    <td class="detail-info" th:if="${liftfault.uplimit}=='0'">否</td>
+                    <td class="detail-info" th:if="${liftfault.uplimit}=='1'">是</td>
+                    <td class="detail-info" th:if="${liftfault.uplimit}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">下极限是否动作:</td>
+                    <td class="detail-info" th:if="${liftfault.downlimit}=='0'">否</td>
+                    <td class="detail-info" th:if="${liftfault.downlimit}=='1'">是</td>
+                    <td class="detail-info" th:if="${liftfault.downlimit}==null"> </td>
+                </tr>
+                <tr>
+                    <td class="detail-title">轿厢报警按钮是否动作:</td>
+                    <td class="detail-info" th:if="${liftfault.alarm}=='0'">否</td>
+                    <td class="detail-info" th:if="${liftfault.alarm}=='1'">是</td>
+                    <td class="detail-info" th:if="${liftfault.alarm}==null"> </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td colspan="3"></td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

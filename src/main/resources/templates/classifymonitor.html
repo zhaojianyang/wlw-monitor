@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta charset="UTF-8"/>
+    <title>分类监测</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}"/>
+    <style type="text/css">
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+        .layui-btn {
+            border-radius: 8px;
+        }
+        .container-fluid {
+             padding-right: 6px;
+             padding-left: 6px;
+             margin-right: auto;
+             margin-left: auto;
+         }
+    </style>
+
+
+</head>
+<body>
+
+<section layout:fragment="content">
+    <div class="container-fluid" style="display: block;">
+        <div class="panel panel-default" style="margin-top: 5px">
+            <div class="panel-body">
+                <div class="row" id="lookup" style="height: 50px;padding:25px">
+
+                    <div class="" style="width:40%; float: left;">
+                        <label class="layui-form-label" style="width: 100px;">维保单位：</label>
+                        <div class="layui-input-block">
+                            <select class="input-md form-control" id="maintdeptid" name="maintdeptid"  >
+                                <option value ="">请选择</option>
+                                <option th:each="Maintain:${maintainList}" th:value="${Maintain.deptId}" th:text="${Maintain.maintainName}">--</option>
+
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-input-block" style="width: 150px; float: right;margin-top:10px;">
+                        <button class="layui-btn"  id="search">查询</button>
+                        <button type="reset" id="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="display: block;margin-bottom: 30px;">
+            <div class="panel-body">
+                <div class="row">
+                    <div style="width:50%; float: left;margin: 5px">
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <table style="width: 100%" class="table table-hover td-center">
+                        <tr class="info">
+                            <td width="15%" style="line-height: 40px;">维保单位</td>
+                            <td width="15%" style="line-height: 40px;">地址</td>
+                            <td width="15%" style="line-height: 40px;">更新时间</td>
+                            <td width="15%" style="line-height: 40px;">电梯数量</td>
+                            <td width="10%" style="line-height: 40px;">操作</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style="text-align: center;display: block;" id="onload">
+                    <iframe scrolling="no"  class="layui-layer-load"
+                            frameborder="0"
+                            style="height: 350px;"></iframe>
+
+                </div>
+
+            </div>
+            <div class="panel-footer">
+                <div class="laypage_main laypageskin_default" style="position: absolute;margin-left: 40%;" id="totalDiv">
+                    <span class="laypage_curr" id="totalNum"></span>
+                </div>
+                <div id="content1" style="margin-left: 55%"></div>
+            </div>
+        </div>
+    </div>
+
+
+   <!--<iframe src="home.html" style="width: 100%;min-height: 800px;display: none;"></iframe>-->
+
+    <script type="text/javascript">
+        var page = 1;
+        $(function () {
+            $("li.layui-nav-item").eq(3).addClass("layui-this");
+            var maintDeptid = "";
+
+            getLiftListGroupByMaintDepartment(maintDeptid,1);
+
+            $("#search").bind("click",function () {
+
+                maintDeptid = $("#maintdeptid").val();
+                page=1;
+                getLiftListGroupByMaintDepartment(maintDeptid,page);
+            });
+
+            $("#reset").bind("click",function () {
+                $("#maintdeptid").val("");
+            });
+
+        });
+
+
+        function getLiftListGroupByMaintDepartment(maintDeptid,page) {
+            document.getElementById("onload").style.display = "block";
+            $("table tr.info").nextAll().remove();
+            var url = "getLiftListGroupByMaintDepartment?maintDeptid="+maintDeptid+"&page;"+page;
+
+            url = url.replace(";","=");
+
+            $.get(url,function (data) {
+                document.getElementById("onload").style.display = "none";
+                var list = data.rundatas;
+
+                var totalNum = data.total;
+                $("#totalNum").html("总共&nbsp;&nbsp;" + totalNum + "&nbsp;&nbsp;条记录");
+
+                var pages = data.pages;
+
+                for (var i in list){
+                    var tr = $("<tr></tr>");
+                    var td1 = $('<td width="28%" style="line-height: 45px;">'+list[i].maintName+'</td>');
+                    tr.append(td1);
+                    var td2 = $('<td width="27%" style="line-height: 45px;">'+list[i].maintAddress+'</td>');
+                    tr.append(td2);
+                    var td3 = $('<td width="20%" style="line-height: 45px;">'+list[i].updateTime+'</td>');
+                    tr.append(td3);
+                    var joinLift = list[i].joinLift;
+/*                    if("8a8181f65c9f3816015c9f3ed01b0007" == list[i].deptId){
+                        joinLift = '441';
+                    }else if("8a8181f65c9f3816015c9f3e0cde0006" == list[i].deptId){
+                        joinLift = '2995';
+                    }*/
+                    var td4 = $('<td width="15%" style="line-height: 45px;">'+joinLift+'</td>');
+                    tr.append(td4);
+//                    var td5 = $('<td width="10%" style="line-height: 35px;">查看</td>');
+//                    tr.append(td5);
+                    var td6 = $('<td width="10%"></td>');
+
+                    var a2 = $('<a><img src="images/webcam.png"/></a>');
+
+
+                    a2.attr("href","/jshx/homeliftlistbytype?searchValue="+list[i].maintId);
+
+                    td6.append(a2);
+                    tr.append(td6);
+                    $("table").append(tr);
+                }
+
+                setTimeout(function () {
+                    var pageContent = $("#content1").html();
+
+                    if(pageContent == ""){
+                        document.getElementById("totalDiv").style.position = "relative";
+                    }else{
+                        document.getElementById("totalDiv").style.position = "absolute";
+                    }
+                },200);
+
+                laypage({
+                    cont: 'content1',
+                    pages: pages,
+                    curr: page,
+                    jump: function (obj, first) {
+                        if (!first) {
+                            getLiftListGroupByMaintDepartment(maintDeptid,obj.curr);
+                        }
+                    }
+                });
+
+            },"json");
+        }
+
+
+        function detail(regcode) {
+
+            layer.open({
+                type: 2,
+                title: '实时详情',
+                shade: [0],
+                area: ['1000px', '400px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['getRealtimeDetail/' + regcode, 'no'],
+
+            });
+
+
+        }
+    </script>
+</section>
+</body>
+</html>

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta charset="UTF-8"/>
+    <title>运行监测系统</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/new-css/datatable.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/hik-bootstrap.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/homepage.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/responsive.css}"/>
+    <link rel="stylesheet" th:href="@{/new-css/WdatePicker.css}"/>
+
+
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        a, img {
+            border: 0;
+            text-decoration: none;
+        }
+
+        body {
+            font: 12px/180% Arial, Helvetica, sans-serif, "新宋体";
+        }
+
+        p {
+            margin: 0px;
+            padding: 0px;
+            line-height: 20px;
+        }
+
+        i {
+            margin: 0px;
+            padding: 0px;
+            font-style: normal;
+        }
+
+        ul {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+        }
+
+        ul li {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+        }
+
+        a {
+            color: #333333;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ff5a00;
+            text-decoration: none;
+        }
+
+        .clear {
+            clear: both;
+            font-size: 0px;
+            line-height: 0;
+            height: 0;
+        }
+
+        @font-face {
+            font-family: 'icomoon';
+            src: url('fonts/icomoon.eot?qradjf');
+            src: url('fonts/icomoon.eot?qradjf#iefix') format('embedded-opentype'),
+            url('fonts/icomoon.ttf?qradjf') format('truetype'),
+            url('fonts/icomoon.woff?qradjf') format('woff'),
+            url('fonts/icomoon.svg?qradjf#icomoon') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .laypage_main a, .laypage_main input, .laypage_main span {
+            height: 25px;
+            line-height: 25px
+        }
+
+        .laypage_main a, .laypage_main span {
+            margin: 0px 2px 12px;
+            padding: 0 6px;
+        }
+
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+
+    </style>
+</head>
+<body>
+
+<section layout:fragment="content">
+
+
+    <div class="container-fluid padding5">
+
+        <div class="homearea">
+
+            <div class="homeright">
+                <div class="common map">
+                    <div class="widget" style="height: 260px;">
+                        <div class="widget-head">快捷方式</div>
+                        <div class="widget-content">
+                            <div style=" margin-top: 30px">
+                                <ul class="dshb_icoNav tac">
+                                    <li>
+                                        <a href="/jshx/realtimelist" class="button-phone">
+                                            <span id="realTimeTotal" class="label label-info" style=""></span>
+                                            <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">监测电梯</span>
+                                        </a>
+                                    </li>
+                                    <!--<li><a href="/jshx/homerealtimelist" class="button-first-aid">-->
+                                    <li><a href="/jshx/hometodayrealtimelist" class="button-first-aid">
+                                        <span id="todayDataNum" class="label label-info" style=""></span>
+                                        <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">试点电梯</span></a>
+                                    </li>
+                                    <li><a href="/jshx/faultrecordlist" class="button-shield">
+                                        <span id="faultrecordTotal" class="label label-info" style=""></span>
+                                        <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">累计故障</span></a>
+                                    </li>
+                                    <li><a href="/jshx/homemaintainlist" class="button-configuration">
+                                        <span id="manitTotal" class="label label-info" style=""></span>
+                                        <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">维保单位</span></a>
+                                    </li>
+                                    <li><a href="/jshx/homeusecompanylist" class="button-globe">
+                                        <span id="useCompanyTotal" class="label label-info" style=""></span>
+                                        <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">使用单位</span></a>
+                                    </li>
+                                    <li><a href="/jshx/homebyarealist" class="button-world">
+                                        <span id="areaTotal" class="label label-info" style=""></span>
+                                        <span style="margin-top: -18%;position: absolute;margin-left: -48%;width: 100px;">覆盖区域</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alarm alarmlist">
+                    <div class="widget" style="height: 373px;" id="alarmWidget">
+                        <div class="widget-head">电梯最近报警</div>
+                        <div class="widget-content">
+                            <div id="marqueeAlarm"
+                                 style="overflow: hidden; height: 340px; width: 100%; font-size: 12px; line-height: 20px;">
+                                <div id="alarm1">
+                                    <!--<table style="border:0px; margin: 0 auto;" width="98%"
+                                           cellspacing="0" cellpadding="0">
+                                        <tbody>
+                                        <tr style="border-bottom: 1px dotted gray; height: 40px;">
+                                            <td style="cursor: pointer; text-align:left;">
+                                                <a href="javascript:ViewAccidentDetail(1708002171)"
+                                                   title="十四化建1号梯">
+                                                    <span title="十四化建1号梯">
+                                                        <font color="#0077CC">十四化建1号梯</font>&nbsp;
+                                                    </span></a>&nbsp;
+                                            </td>
+                                            <td align="left"><span title="长时间关人">
+                                                长时间关人&nbsp;</span>
+                                            </td>
+                                            <td align="left">
+                                                <span title="2017-08-18 19:12:58">2017-08-18</span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>-->
+                                </div>
+                                <div id="alarm2"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="homeleft" style="/*height: 610px;*/">
+
+                <div class="common online">
+                    <div class="widget">
+                        <div class="widget-head">电梯分布地图</div>
+                        <div class="widget-content" style="/*min-height: 610px;*/">
+                            <div id="map" style="width: 100%; /*min-height: 610px;height: 610px;*/"></div>
+                            <div id="divSearch" class="advancedSearch" style="max-width: 283px;">
+                                <div class="input-append">
+                                    <input type="text" id="txtSearchValue" class="advancedSearch_input" value=""
+                                           placeholder="请输入电梯识别码、电梯地址、维保单位"/>
+                                    <span id="searchProj" class="advancedSearch_right">
+                                        <span class="advancedSearch_button"></span>
+                                    </span>
+                                </div>
+
+                                <div id="searchProcess" class="dataTables_processing"
+                                     style="display: none;color:#41A5E2;">
+                                    正在加载中...
+                                </div>
+                                <div id="warmAlarm" class="dataTables_processing" style="display: none;color:#41A5E2;">
+                                    请输入识别码、电梯地址、维保单位
+                                </div>
+                                <div id="empty" class="dataTables_processing" style="display: none;color:#41A5E2;">
+                                    未查询到数据
+                                </div>
+                                <div class="clear"></div>
+                                <div id="tableList" style="height: 350px;overflow:auto;margin-top: 3%;
+                                max-width: 283px;display: none;background: white;position: relative;z-index: -100;">
+                                    <table style="width: 100%;" class="table table-hover td-center" id="searchTable">
+                                        <tr class="info">
+                                            <td width="33%">注册码</td>
+                                            <td width="33%">识别码</td>
+                                            <td width="33%">地址</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+
+                                <!--<div class="container-fluid">-->
+                                <!--<div class="panel panel-default">-->
+                                <div class="panel-footer" id="pageStop" style="display: none;
+                                        z-index: 100;max-height:30px;">
+                                    <div id="content1" style="margin-left: 4%;margin-top:-15%;max-height:30px;">
+                                        <div class="laypage_main laypageskin_default" style="max-height:30px;">
+                                            <a href="javascript:jumpToPage('0');" class="laypage_first" title="首页"
+                                               style="border-radius: 6px;">首页</a>
+                                            <a href="javascript:jumpToPage('1');" class="laypage_prev"
+                                               style="border-radius: 6px;">前页</a>
+                                            <a href="javascript:jumpToPage('2');" class="laypage_prev"
+                                               style="border-radius: 6px;">后页</a>
+                                            <a href="javascript:jumpToPage('3');" class="laypage_first" title="尾页"
+                                               style="border-radius: 6px;">尾页</a>
+                                            <input type="text"
+                                                   style="width: 28px; display: inline; height: 18px; margin: 0px 1px 0px;border-radius: 6px;"
+                                                   id="pageInput"/>
+                                            <span class="paginate_button paginate_of" id="pageSpan">页</span>
+                                            <!--<span class="laypage_curr">6595</span>-->
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <!--</div>-->
+                                <!--</div>-->
+
+                                <!--
+                                                                <div class="dataTables_paginate paging_inputshort" id="tbDataList_paginate">
+                                                                    <span class="paginate_button first" id="tbDataList_first">首页</span>
+                                                                    <span class="paginate_button previous" id="tbDataList_previous"> 前页 </span>
+                                                                    <span class="paginate_button next" id="tbDataList_next"> 后页 </span>
+                                                                    <span class="paginate_button last" id="tbDataList_last"> 尾页 </span>
+                                                                    <input type="text" style="width: 15px; display: inline; height: 18px; margin: -3px 0px 0px;"/>
+                                                                    <span class="paginate_button paginate_of">/14页</span>
+                                                                </div>
+                                -->
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            GetAlarmData();
+            $("#refreshAlarm").click(function () {
+                GetAlarmData();
+            });
+            getAmount();
+        });
+
+
+        function getAmount() {
+            var manitUrl = "getLiftListGroupByMaintDepartment?maintDeptid=" + "" + "&page;" + 1;
+            manitUrl = manitUrl.replace(";", "=");
+            $.get(manitUrl, function (data) {
+                var manitTotal = data.total;
+                $("#manitTotal").html(manitTotal);
+            }, "json");
+
+            var realTimeurl = "getRealtimeList?regcode=" + "" + "&isonline;" + "" + "&maintdeptid;" + "" + "&page;" + 1 + "&allOrToday;" + "allAndToday" + "&liftCode;" + "";
+            realTimeurl = realTimeurl.replace(";", "=").replace(";", "=").replace(";", "=").replace(";", "=").replace(";", "=");
+            $.get(realTimeurl, function (data) {
+                var realTimeTotal = data.total;
+                /*var realTimeTotal = 3512;*/
+                var maintOntimeNum = data.maintOntimeNum;
+                /*var maintOntimeNum = 441;*/
+                $("#realTimeTotal").html(realTimeTotal);
+                $("#todayDataNum").html(maintOntimeNum);
+            }, "json");
+
+            var areaUrl = "getLiftListGroupByAreaId?areaId=" + "" + "&page;" + 1;
+            areaUrl = areaUrl.replace(";", "=");
+            $.get(areaUrl, function (data) {
+                var areaTotal = data.total;
+                $("#areaTotal").html(areaTotal);
+
+            }, "json");
+
+            var useCompanyUrl = "getLiftListGroupByUseCompanyId?companyId=" + "" + "&page;" + 1;
+            useCompanyUrl = useCompanyUrl.replace(";", "=");
+            $.get(useCompanyUrl, function (data) {
+                var useCompanyTotal = data.total;
+                $("#useCompanyTotal").html(useCompanyTotal);
+            }, "json");
+
+            var faultrecordUurl = "getFaultrecordList?regcode=" + "" + "&istrap;" + "" + "&maintdeptid;" + "" + "&page;" + 1 + "&liftCode;" + "";
+            faultrecordUurl = faultrecordUurl.replace(";", "=").replace(";", "=").replace(";", "=").replace(";", "=");
+            $("table tr.info").nextAll().remove();
+            $.get(faultrecordUurl, function (data) {
+                var faultrecordTotal = data.total;
+                $("#faultrecordTotal").html(faultrecordTotal);
+
+            }, "json");
+
+        }
+
+
+        $('#pageInput').bind('input propertychange', function () {
+
+            var page = $('#pageInput').val();
+            var pages = $('#pageSpan').html().split("页")[0].split("/")[1];
+            var searchValue = $("#txtSearchValue").val();
+
+            if (isNaN(page)) {
+                alert("请输入页数,必须是数字!");
+                return;
+            }
+
+            if (page - pages > 0) {
+                //alert("输入的页数不能大于总页数!");
+                page = pages;
+                //getLiftListByParam(searchValue,page) ;
+            } else if (0 >= page) {
+                //alert("输入的页数必须大于 0 !")
+                page = 1;
+
+            }
+            if (searchValue == "") {
+                $("table tr.info").nextAll().remove();
+                document.getElementById("searchProcess").style.display = "none";
+                document.getElementById("warmAlarm").style.display = "block";
+            } else {
+                getLiftListByParam(searchValue, page);
+            }
+
+        });
+
+
+        function jumpToPage(type) {
+
+            if(searchValue == ""){
+                $("table tr.info").nextAll().remove();
+                document.getElementById("searchProcess").style.display = "none";
+                document.getElementById("warmAlarm").style.display = "block";
+            }else{
+                var type = type;
+                var page = $('#pageInput').val();
+                var pages = $('#pageSpan').html().split("页")[0].split("/")[1];
+                var searchValue = $("#txtSearchValue").val();
+
+                var currPage = page;
+
+                if(type == 0){
+                    currPage = 1;
+                    getLiftListByParam(searchValue,currPage);
+
+                }else if(type == 1){
+                    if(page == 1 ){
+                        currPage = 1;
+                        getLiftListByParam(searchValue,currPage);
+                    }else{
+                        currPage = page-1;
+                        getLiftListByParam(searchValue,currPage);
+                    }
+                }else if(type == 2){
+                    if(page == pages ){
+                        currPage = pages;
+                        getLiftListByParam(searchValue,currPage);
+                    }else{
+                        currPage = parseInt(page) + 1;
+                        getLiftListByParam(searchValue,currPage);
+                    }
+                }else if(type == 3){
+                    currPage = pages;
+                    getLiftListByParam(searchValue,currPage);
+                }
+            }
+
+
+        }
+
+
+
+
+
+        function GetAlarmData() {
+
+            $.ajax({
+                "dataType": 'json',
+                "type": "POST",
+                "url": "/jshx/getLiftFaultAlarmList",
+                "error": function (xhr, error, thrown) {
+                    $("#alarm1").html("数据载入失败......");
+                },
+                "success": function (result) {
+
+                    var alarmList = result.data;
+
+                    var displayText = "";
+                    var text = '<table style="border:0px; margin: 0 auto;" width="98%" cellspacing="0" cellpadding="0">';
+                    for (var i in alarmList) {
+                        text += '<tr style="border-bottom: 1px dotted gray; height: 40px;">';
+
+                        text += ' <td style="cursor: pointer; text-align:left;">';
+                        //text = text +'<a href="/jshx/home?regcode='+ alarmList[i].regcode + '" title="' + alarmList[i].liftAddress + '">' + '<span title="' + alarmList[i].liftAddress + '"><font color="#0077CC">' + (alarmList[i].liftAddress).substr(0,7) + '...</font>&nbsp;</span>' + '</a>';
+                        text = text + '<a href="/jshx/faultrecordlist" title="' + alarmList[i].liftAddress + '">' + '<span title="' + alarmList[i].liftAddress + '"><font color="#0077CC">' + (alarmList[i].liftAddress).substr(0, 7) + '...</font>&nbsp;</span>' + '</a>';
+                        //text += '<a title="' + alarmList[i].liftAddress + '">' + '<span title="' + alarmList[i].liftAddress + '"><font color="#0077CC">' + (alarmList[i].liftAddress).substr(0,7) + '...</font>&nbsp;</span>' + '</a>';
+                        text += '&nbsp;</td>';
+
+                        text += '<td align="left">';
+                        text += '<span title="' + alarmList[i].content + '">' + alarmList[i].content + '&nbsp;</span>';
+                        text += '</td>';
+
+
+                        text += '<td align="left">';
+                        /*
+                                                text += '<span title="' + alarmList[i].createTime + '">' + (alarmList[i].createTime).substr(0,10) + '</span>';
+                        */
+                        text += '<span title="' + alarmList[i].startTime + '">' + (alarmList[i].startTime) + '</span>';
+                        text += ' </td>';
+
+                        text += ' </tr>';
+
+                    }
+                    text += '</table>';
+
+                    displayText += text;
+                    $("#alarm1").html(displayText);
+                    if (alarmList.length > 8) {
+                        SetAlarmMarquee();
+                    }
+                }
+            });
+        }
+
+
+        function SetAlarmMarquee() {
+            var marqueeAlarm = $("#marqueeAlarm");
+            var alarm1 = $("#alarm1");
+            var alarm2 = $("#alarm2");
+            alarm2.html(alarm1.html());
+
+            function MarqueeAlarm() {
+                if (marqueeAlarm.scrollTop() >= alarm2.height()) {
+                    marqueeAlarm.scrollTop(0);
+                }
+                else {
+                    marqueeAlarm.scrollTop(marqueeAlarm.scrollTop() + 1);
+                }
+            }
+
+            clearInterval(MyMarAlarm);
+            var MyMarAlarm = setInterval(MarqueeAlarm, 30);
+
+            marqueeAlarm.mouseover(function () {
+                clearInterval(MyMarAlarm);
+            })
+
+            marqueeAlarm.mouseout(function () {
+                MyMarAlarm = setInterval(MarqueeAlarm, 30);
+            })
+        }
+    </script>
+
+
+    <script type="text/javascript">
+        $(function () {
+            $("li.layui-nav-item").eq(0).addClass("layui-this");
+            var height = document.documentElement.clientHeight;
+            var width = document.documentElement.clientWidth;
+            if (0 == height) {
+                height = document.body.clientHeight;
+            }
+            if (0 == width) {
+                width = document.body.clientWidth;
+            }
+
+            $("#map").height(height * 0.97 - $("#map").offset().top - 15);
+            $("#marqueeAlarm").height(height * 0.97 - $("#marqueeAlarm").offset().top - 15);
+
+            /*
+                        console.info(height,"PPPPPPPPPPPP")
+                        console.info(height*0.97 - $("#marqueeAlarm").offset().top - 15)
+                        console.info(height*0.97 - $("#map").offset().top - 15,"MAP")
+            */
+
+
+            //将最近电梯报警的边框和电梯报警div的高度设置成一致
+            var alarmHeight = document.getElementById("marqueeAlarm").style.height;
+            var temHight = alarmHeight.split("px")[0];
+            var widgetHight = parseInt(temHight) + 33 + "px";
+            document.getElementById("alarmWidget").style.height = widgetHight;
+
+            getMintorLift();
+//            searchLift();
+            var page = 1;
+            searchProj(page);
+        });
+    </script>
+
+
+    <script type="text/javascript">
+        //置顶图标显示
+        $('#top-back').hide()
+        $(window).scroll(function () {
+            if ($(this).scrollTop() > 350) {
+                $("#top-back").fadeIn();
+            }
+            else {
+                $("#top-back").fadeOut();
+            }
+        })
+
+        //置顶事件
+        function topBack() {
+            $('body,html').animate({scrollTop: 0}, 300);
+        }
+    </script>
+
+    <script type="text/javascript">
+
+        var map = new BMap.Map('map');
+        map.centerAndZoom(new BMap.Point(118.790961, 32.405455), 11);
+        map.enableScrollWheelZoom();
+        var markerClusterer;
+
+
+        function stopPropagation(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            } else {
+                e.cancelBubble = true;
+            }
+        }
+
+        $(document).bind('click', function () {
+            document.getElementById("tableList").style.display = "none";
+            document.getElementById("searchProcess").style.display = "none";
+            document.getElementById("warmAlarm").style.display = "none";
+            document.getElementById("empty").style.display = "none";
+            document.getElementById("pageStop").style.display = "none";
+        });
+
+
+        function getMintorLift() {
+            /*<![CDATA[*/
+            var markers = [];
+            var url = "findAllMintorLift?regcode=" + "" + "&liftcode=" + "" + "&liftaddress=" + "" + "&maintdeptid=";
+            $.get(url, function (data) {
+                var lifts = data.list;
+                for (var i = 0; i < lifts.length; i++) {
+                    (function () {
+                        var index = i;
+                        var jd = lifts[index].longitude;
+                        var wd = lifts[index].latitude;
+                        var zcm = lifts[index].regcode;
+                        var sbm = lifts[index].liftcode;
+                        var dz = lifts[index].liftaddress;
+                        var wbdw = lifts[index].maintainName;
+
+
+                        var iconFmOpen = new BMap.Icon("images/liftpoint.png", new BMap.Size(50, 50), {
+                            offset: new BMap.Size(0, 0),
+                            imageOffset: new BMap.Size(0, 10)
+                        });
+
+                        var marker = new BMap.Marker(new BMap.Point(jd, wd), {icon: iconFmOpen});
+                        marker.addEventListener("click", function () {
+                            var content = "<div><table>";
+                            content = content + "<tr><td> 注册码：" + zcm + "</td></tr>";
+                            content = content + "<tr><td> 识别码：" + sbm + "</td></tr>";
+                            content = content + "<tr><td> 地址：" + dz + "</td></tr>";
+                            content = content + "<tr><td> 维保单位：" + wbdw + "</td></tr>";
+                            content = content + "<tr ><td><a href='javascript:currentstate(\"" + zcm + "\")' style='color: red'>查看实时状态</a></td></tr>";
+                            content += "</table></div>";
+                            this.openInfoWindow(new BMap.InfoWindow(content));
+                        });
+                        markers.push(marker);
+                    })();
+                }
+                markerClusterer = new BMapLib.MarkerClusterer(map, {markers: markers});
+
+                //showRealTimeLiftMapPoint();//快捷方式对应的实时电梯信息
+            }, "json");
+            /*]]>*/
+
+
+        };
+
+
+        function searchProj(page) {
+            /*<![CDATA[*/
+
+            $("#pageStop").click(function (e) {
+                stopPropagation(e);
+                document.getElementById("tableList").style.display = "block";
+            });
+
+            $("#searchProj").click(function (e) {
+                var searchValue = $("#txtSearchValue").val();
+                stopPropagation(e);
+
+                document.getElementById("tableList").style.display = "block";
+                document.getElementById("pageStop").style.display = "block";
+
+                if (searchValue == "") {
+                    $("table tr.info").nextAll().remove();
+                    document.getElementById("searchProcess").style.display = "none";
+                    document.getElementById("warmAlarm").style.display = "block";
+                    document.getElementById("pageStop").style.display = "none";
+                } else {
+                    getLiftListByParam(searchValue, page);
+                }
+
+
+            });
+            /*]]>*/
+        }
+
+
+        function getLiftListByParam(searchValue, page) {
+            document.getElementById("searchProcess").style.display = "block";
+            document.getElementById("pageStop").style.display = "block";
+
+            var url = "fuzzyQueryAllMintorLift?searchValue=" + searchValue + "&page;" + page;
+
+            url = url.replace(";", "=");
+            $.get(url, function (data) {
+                $("table tr.info").nextAll().remove();
+                var lifts = data.rundatas;
+                var pages = data.pages;
+                $('#pageInput').val(page);
+
+                $("#pageSpan").html("/" + pages + "页");
+                document.getElementById("searchProcess").style.display = "none";
+                document.getElementById("warmAlarm").style.display = "none";
+                if (lifts.length == 0) {
+                    document.getElementById("empty").style.display = "block";
+                } else {
+                    document.getElementById("empty").style.display = "none";
+                }
+
+                for (var i in lifts) {
+                    (function () {
+                        var index = i;
+                        var jd = lifts[index].longitude;
+                        var wd = lifts[index].latitude;
+                        var zcm = lifts[index].regcode;
+                        var sbm = lifts[index].liftcode;
+                        var dz = lifts[index].liftaddress;
+                        var wbdw = lifts[index].maintainName;
+
+
+                        var tr = $('<tr style="cursor:pointer;"></tr>');
+                        var td1 = $('<td width="33%">' + zcm + '</td>');
+                        tr.append(td1);
+                        var td2 = $('<td width="33%">' + sbm + '</td>');
+                        tr.append(td2);
+                        var td3 = $('<td width="33%" style="overflow: hidden; text-overflow:ellipsis;white-space: nowrap;">' + dz + '</td>');
+                        tr.append(td3);
+
+                        var td4 = $('<td width="33%" style="display: none">' + jd + '</td>');
+                        tr.append(td4);
+                        var td5 = $('<td width="33%" style="display: none">' + wd + '</td>');
+                        tr.append(td5);
+                        var td6 = $('<td width="33%" style="display: none">' + wbdw + '</td>');
+                        tr.append(td6);
+
+                        tr.bind("click", function () {
+                            var singlewbdw = $(this).children('td').eq(5).html();
+                            var singlejd = $(this).children('td').eq(3).html();
+                            var singlewd = $(this).children('td').eq(4).html();
+                            var singlezcm = $(this).children('td').eq(0).html();
+                            var singlesbm = $(this).children('td').eq(1).html();
+                            var singledz = $(this).children('td').eq(2).html();
+
+                            var iconFmOpen = new BMap.Icon("images/liftpoint.png", new BMap.Size(50, 50), {
+                                offset: new BMap.Size(0, 0),
+                                imageOffset: new BMap.Size(0, 10)
+                            });
+                            var singlemarker = new BMap.Marker(new BMap.Point(singlejd, singlewd), {icon: iconFmOpen});
+
+                            map.setZoom(15);
+                            map.panTo(new BMap.Point(singlejd, singlewd));
+                            singlemarker.addEventListener("click", function () {
+                                var content = "<div><table>";
+                                content = content + "<tr><td> 注册码：" + singlezcm + "</td></tr>";
+                                content = content + "<tr><td> 识别码：" + singlesbm + "</td></tr>";
+                                content = content + "<tr><td> 地址：" + singledz + "</td></tr>";
+                                content = content + "<tr><td> 维保单位：" + singlewbdw + "</td></tr>";
+                                content = content + '<tr ><td><a href="javascript:currentstate(\'' + singlezcm + '\')" style="color: red">查看实时状态</a></td></tr>';
+                                content += "</table></div>";
+                                this.openInfoWindow(new BMap.InfoWindow(content));
+                            });
+                            markerClusterer.clearMarkers();
+                            markerClusterer.addMarker(singlemarker);
+                        });
+                        $("#searchTable").append(tr);
+
+                    })();
+                }
+
+                /*laypage({
+                    cont: 'content1',
+                    pages: pages,
+                    curr: page,
+                    jump: function (obj, first) {
+                        if (!first) {
+                            getLiftListByParam(searchValue,obj.curr);
+                        }
+                    }
+                });*/
+
+            }, "json");
+        }
+
+
+        function currentstate(regcode){
+            /*<![CDATA[*/
+            map.closeInfoWindow();
+            layer.open({
+                type: 2,
+                title: '电梯实时状态',
+                shade: [0],
+                area: ['900px', '540px'],
+                offset: 'auto', //右下角弹出
+                shadeClose: true, //开启遮罩关闭
+                shift: 2,
+                content: ['rundetail?regcode='+regcode, 'no'], //iframe的url，no代表不显示滚动条
+                /* btn: ['查看电梯', '关闭窗口'],
+                 success: function(layero){
+                 var btn = layero.find('.layui-layer-btn');
+                 btn.find('.layui-layer-btn0').attr({
+                 href: 'health'
+                 });
+                 }*/
+            });
+            /*]]>*/
+        }
+
+    </script>
+</section>
+</body>
+</html>

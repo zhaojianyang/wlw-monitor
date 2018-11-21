@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="webModel">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" charset="UTF-8" />
+    <title>统计分析</title>
+    <link rel="SHORTCUT ICON" th:href="@{/images/title.ico}"/>
+    <link rel="stylesheet" th:href="@{/bootstrap/css/bootstrap.css}"/>
+
+    <style>
+        .layui-footer-full {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 24px;
+            background-color: #eee
+        }
+        table.dataTable thead td {
+            padding: 8px
+        }
+        body,form,div,ul,ol,li,h1,h2,h3,h4,h5,h6,table,tr,th,td,p,input,dl,dt,dd,ul,ol,li,input,textarea { font-family:"微软雅黑"!important;
+        }
+
+        .layui-table td, .layui-table th {
+            min-height: 40px;
+            line-height: 40px;
+        }
+        dd {
+            line-height: 36px;
+        }
+
+        li {
+            list-style: none;
+            line-height: 66px;
+        }
+    </style>
+
+</head>
+<body>
+
+<section layout:fragment="content">
+
+    <div class="layui-layout layui-layout-admin" >
+        <!--<jsp:include page="/header.jsp"></jsp:include>-->
+        <div  style=" width:100%;padding-right: 15px;padding-left: 15px;margin-right: auto; margin-left: auto;">
+            <div class="row-fluid"
+                 style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+                <div class="row" style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+                    <p style="font-size: 26px;font-weight:bold;">南京市电梯数据维保单位综合分析</p>
+                </div>
+                <div class="row" style="border-top: 1px solid #d9d9d9;margin-right: -25px;margin-left: -25px;">
+                    <div class="col-xs-5" style="float: left;width: 45%;">
+                        <!--<div id="chooseDate" style="width:90px; height: 18px; float: right; margin-top: 18px; margin-right: 30px;" class="laydate-icon"></div>-->
+<!--
+                        <div style="font-size:20px; float: right; margin-top: 10px; margin-right: 22%;">南京市电梯数据维保单位综合分析&nbsp;&nbsp;&nbsp;
+-->
+                        <div style="font-size:20px; float: left; margin-top: 10px;">南京市电梯数据维保单位综合分析&nbsp;&nbsp;&nbsp;
+                            <!--<font size="2">统计时间：</font>-->
+                        </div>
+                        <div id="maintSixItemsLine" style="min-height: 600px; width: 100%; margin-top: 55px; margin-bottom: 10px;margin-left: -5%;"></div>
+                    </div>
+
+                    <div  class="col-xs-5"  style="float:right;/*margin-right: 8.2%;*/
+                                  min-height: 600px;width: 64.3%;position: absolute;margin-left: 36.2%;">
+                        <div id="maintTableDiv" class="content" style="min-height: 600px; width:100%; padding-top: 25px; padding-bottom: 0;">
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载各项数据 -->
+    <script type="text/javascript">
+        $(function() {
+            getMaintSixItemsData();
+            setWidthHeight();
+            $("li.layui-nav-item").eq(4).addClass("layui-this");
+        });
+
+        function setWidthHeight() {
+            var screenWidth = screen.width;
+            var screenHeight = screen.height;
+            //document.getElementById("maintTableDiv").style.width = screenWidth - document.getElementById("maintSixItemsLine").style.width + "px";
+            document.getElementById("maintTableDiv").style.height = screenHeight * 66% + "px";
+        }
+
+        function getMaintSixItemsData() {
+            var barChart = echarts.init(document.getElementById('maintSixItemsLine'));
+
+            var innerTableHTML = '<table id="maintTable" class="layui-table" lay-even="" lay-skin="row">' +
+                '<thead style="font-weight: bold;">' +
+                "<tr>" +
+
+                "<td>维保单位</td>" +
+                "<td>拥有量</td>" +
+                "<td>接入量</td>" +
+                "<td>故障数量</td>" +
+                "<td>覆盖电梯量</td>" +
+                "<td>接入时间</td>" +
+                "<td>更新时间</td>" +
+                "</tr>" +
+                "</thead>" +
+                "</table>";
+            $('#maintTableDiv').html(innerTableHTML);
+
+            var url = "bigdataMaintAnalysis";
+
+            var table = $('#maintTable').DataTable({
+                "lengthChange" : false,
+                "searching" : false,
+                "ordering" : false,
+                "bRetrieve": true,
+                "bDestroy": true,
+                "processing" : true,
+                "serverSide" : true,
+                "ajax" : {
+                    url : url,
+                    type : 'GET'
+                },
+                "columns" : [ {
+                    "data" : "maintName"
+                }, {
+                    "data" : "ownLift"
+                }, {
+                    "data" : "joinLift"
+                }, {
+                    "data" : "uploadCount"
+                }, {
+                    "data" : "coverLift"
+                } , {
+                    "data" : "createTime"
+                } , {
+                    "data" : "updateTime"
+                } ]
+            });
+            table.on('draw', function() {
+                var i = 0;
+                var xAxisData = new Array();
+                var ownLiftData = new Array();
+                var joinLiftData = new Array();
+                var uploadCountData = new Array();
+                var coverLiftData = new Array();
+                var createTimeData = new Array();
+                var updateTimeData = new Array();
+                /*console.info(table.data(),"tableData")*/
+                table.data().each(function(d) {
+                    console.info(d,"dddddddddd")
+                    xAxisData[i] = d.maintName;
+                    if(d.ownLift == null){
+                        ownLiftData[i] =0
+                    }else{
+                        ownLiftData[i] = d.ownLift;
+                    }
+
+                    var joinLift = d.joinLift;
+
+/*
+                    if("8a8181f65c9f3816015c9f3e0cde0006" == d.deptId){
+                        joinLift = '2995';
+                    }
+*/
+
+                    if(d.joinLift == null){
+                        /*joinLiftData[i] =0*/
+                        joinLiftData[i] =0
+                    }else{
+                        /*joinLiftData[i] = d.joinLift;*/
+                        joinLiftData[i] = joinLift;
+                    }
+                    if(d.uploadCount == null){
+                        uploadCountData[i] =0
+                    }else{
+                        uploadCountData[i] = d.uploadCount;
+                    }
+                    if(d.coverLift == null){
+                        coverLiftData[i] =0
+                    }else{
+                        coverLiftData[i] = d.coverLift;
+                    }
+                    if(d.createTime == null){
+                        createTimeData[i] =0
+                    }else{
+                        createTimeData[i] = d.createTime.substr(0,10);
+                    }
+                    if(d.updateTime == null){
+                        updateTimeData[i] =0
+                    }else{
+                        updateTimeData[i] = d.updateTime.substr(0,10);
+                    }
+                    i++;
+                });
+
+                //draw table
+                barChart.setOption({
+                    tooltip : {
+                        trigger : 'axis',
+                        showDelay : 0,
+                        axisPointer : {
+                            type : 'line'
+                        }
+                    },
+                    legend : {
+                        data : ['拥有的电梯量','接入的电梯量','上传的故障量','故障覆盖的电梯量','首次接入时间','最近一次更新数据时间'],
+                        left: 25,
+                        right:27
+
+                    },
+                    toolbox : {
+                        show : true,
+                        top: 25,
+                        right:'13%',
+                        feature : {
+                            mark : {
+                                show : true
+                            },
+                            dataView : {
+                                show : false,
+                                readOnly : false
+                            },
+                            magicType : {
+                                show : true,
+                                type : [ 'line', 'bar' ]
+                            },
+                            restore : {
+                                show : true
+                            },
+                            saveAsImage : {
+                                show : true
+                            }
+                        }
+                    },
+                    grid: {
+                        y2 : 220
+                    },
+                    calculable : true,
+                    xAxis : [ {
+                        type : 'category',
+                        boundaryGap : true,
+                        data : xAxisData,
+                        axisLabel : {
+                            interval:0,//横轴信息全部显示
+                            rotate:80,//-30度角倾斜显示
+                        }
+                    } ],
+                    yAxis : [ {
+                        type : 'value',
+                        offset:-5
+                    } ],
+                    series : [ {
+                        name : '拥有的电梯量',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : ownLiftData
+                    },{
+                        name : '接入的电梯量',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data :joinLiftData
+                    },{
+                        name : '上传的故障量',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data :uploadCountData
+                    },{
+                        name : '故障覆盖的电梯量',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : coverLiftData
+                    } /*,{
+                        name : '首次接入时间',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : createTimeData
+                    } ,{
+                        name : '最近一次更新数据时间',
+                        type : 'line',
+                        itemStyle : {
+                            normal : {
+                                areaStyle : {
+                                    type : 'default'
+                                }
+                            }
+                        },
+                        data : updateTimeData
+                    } */]
+                });
+            });
+        }
+
+
+    </script>
+
+
+
+
+</section>
+</body>
+</html>
